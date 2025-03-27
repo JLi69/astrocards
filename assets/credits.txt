@@ -8,3 +8,12 @@ Font used:
 "Armata" - (c) Sorkin Type Co
 (Licensed under SIL Open Font License)
 Google Fonts: https://fonts.google.com/specimen/Armata
+
+Artwork used:
+-------------
+
+Title: "Space Backgrounds"
+Author: scorcher24
+URL: https://opengameart.org/content/space-backgrounds
+License: CC0
+Notes: cropped `Hintergrund_Glitzern_Supernova.xcf` for `background.png`

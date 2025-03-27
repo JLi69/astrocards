@@ -3,7 +3,7 @@ mod game;
 mod assets;
 mod impfile;
 
-use game::{Game, assets::models::draw_elements};
+use game::Game;
 use glfw::{WindowMode, Context};
 
 fn main() {
@@ -12,6 +12,7 @@ fn main() {
     let (mut window, events) = glfw.create_window(960, 540, "Astrocards", WindowMode::Windowed)
         .expect("Failed to init window!");
     window.make_current();
+    window.set_size_polling(true);
     //Load OpenGL
     gl::load_with(|s| glfw.get_proc_address_raw(s));
 
@@ -21,16 +22,14 @@ fn main() {
     gamestate.load_config("cfg.impfile");
     //Load assets
     gamestate.load_assets();
+    gamestate.init_window_dimensions(window.get_size());
    
     gfx::set_default_gl_state();
     while !window.should_close() {
         //Clear screen
         gfx::clear();
 
-        //Draw quad
-        gamestate.shaders.use_program("quadshader");
-        let quad = gamestate.models.bind("quad2d");
-        draw_elements(quad);
+        gamestate.draw();
 
         //Print OpenGL errors
         gfx::get_gl_errors();
@@ -38,6 +37,6 @@ fn main() {
         glfw.poll_events();
         window.swap_buffers();
         //Handle events
-        game::process_events(&events);
+        gamestate.process_events(&events);
     }
 }

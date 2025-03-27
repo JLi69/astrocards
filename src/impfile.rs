@@ -16,6 +16,7 @@ pub struct Entry {
 
 pub type EntryList = Vec<Entry>;
 
+#[allow(dead_code)]
 impl Entry {
     pub fn new(entry_name: &str) -> Self {
         Self {
@@ -132,6 +133,7 @@ fn strip_whitespace(line: &str) -> String {
 }
 
 //Writes a comment into a file
+#[allow(dead_code)]
 pub fn write_comment(outfile: &mut File, comment_text: &str) {
     let mut text = String::new();
     for ch in comment_text.chars() {
