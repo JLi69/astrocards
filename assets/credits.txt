@@ -1,0 +1,10 @@
+Astrocards
+
+Programming by Nullptr Error ("JLi69")
+License: GPLv3
+
+Font used:
+----------
+"Armata" - (c) Sorkin Type Co
+(Licensed under SIL Open Font License)
+Google Fonts: https://fonts.google.com/specimen/Armata

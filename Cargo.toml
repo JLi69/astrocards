@@ -1,0 +1,11 @@
+[package]
+name = "astrocards"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cgmath = "0.18.0"
+egui_gl_glfw = "0.1.9"
+gl = "0.14.0"
+glfw = "0.59.0"
+png = "0.17.16"

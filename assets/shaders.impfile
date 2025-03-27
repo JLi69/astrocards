@@ -1,0 +1,9 @@
+# This is a list of shaders that are to be imported
+# Shaders must have the following variables:
+# 'vert' - path to the vertex shader relative to the executable
+# 'frag' - path to the fragment shader relative to the executable
+
+"quadshader" {
+	"vert" = "assets/shaders/quadvert.glsl";
+	"frag" = "assets/shaders/quadfrag.glsl";
+}
