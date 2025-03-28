@@ -12,3 +12,8 @@
 	"vert" = "assets/shaders/flamevert.glsl";
 	"frag" = "assets/shaders/flamefrag.glsl";
 }
+
+"explosionshader" {
+	"vert" = "assets/shaders/explosionvert.glsl";
+	"frag" = "assets/shaders/explosionfrag.glsl";
+}

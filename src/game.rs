@@ -3,13 +3,13 @@ pub mod draw;
 pub mod sprite;
 pub mod update;
 
-use glfw::{WindowEvent, GlfwReceiver};
-use assets::textures::TextureManager;
-use assets::shaders::ShaderManager;
-use assets::models::ModelManager;
-use egui_gl_glfw::egui::FontDefinitions;
 use crate::impfile;
-use sprite::Asteroid;
+use assets::models::ModelManager;
+use assets::shaders::ShaderManager;
+use assets::textures::TextureManager;
+use egui_gl_glfw::egui::FontDefinitions;
+use glfw::{GlfwReceiver, WindowEvent};
+use sprite::{Asteroid, Explosion};
 
 const DEFAULT_SPAWN_INTERVAL: f32 = 16.0;
 
@@ -31,6 +31,7 @@ pub struct Game {
     asteroid_spawn_timer: f32,
     spawn_interval: f32,
     asteroids: Vec<Asteroid>,
+    explosions: Vec<Explosion>,
     time: f32,
 }
 
@@ -46,17 +47,18 @@ fn handle_window_resize(gamestate: &mut Game, w: i32, h: i32) {
 
 impl Game {
     pub fn new() -> Self {
-        Self { 
-            textures: TextureManager::new(), 
-            shaders: ShaderManager::new(), 
-            models: ModelManager::new(), 
-            fonts: FontDefinitions::default(), 
+        Self {
+            textures: TextureManager::new(),
+            shaders: ShaderManager::new(),
+            models: ModelManager::new(),
+            fonts: FontDefinitions::default(),
             cfg: Config::default(),
             window_w: 0,
             window_h: 0,
             asteroid_spawn_timer: 0.0,
             spawn_interval: DEFAULT_SPAWN_INTERVAL,
             asteroids: vec![],
+            explosions: vec![],
             time: 0.0,
         }
     }
