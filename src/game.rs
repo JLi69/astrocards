@@ -1,5 +1,7 @@
 pub mod assets;
 pub mod draw;
+pub mod sprite;
+pub mod update;
 
 use glfw::{WindowEvent, GlfwReceiver};
 use assets::textures::TextureManager;
@@ -7,6 +9,9 @@ use assets::shaders::ShaderManager;
 use assets::models::ModelManager;
 use egui_gl_glfw::egui::FontDefinitions;
 use crate::impfile;
+use sprite::Asteroid;
+
+const DEFAULT_SPAWN_INTERVAL: f32 = 16.0;
 
 //Application config values, these are not meant to be changed by normal users
 #[derive(Default)]
@@ -22,6 +27,10 @@ pub struct Game {
     cfg: Config,
     window_w: i32,
     window_h: i32,
+    //Sprites
+    asteroid_spawn_timer: f32,
+    spawn_interval: f32,
+    asteroids: Vec<Asteroid>,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -44,6 +53,9 @@ impl Game {
             cfg: Config::default(),
             window_w: 0,
             window_h: 0,
+            asteroid_spawn_timer: 0.0,
+            spawn_interval: DEFAULT_SPAWN_INTERVAL,
+            asteroids: vec![],
         }
     }
 

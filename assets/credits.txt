@@ -12,8 +12,13 @@ Google Fonts: https://fonts.google.com/specimen/Armata
 Artwork used:
 -------------
 
-Title: "Space Backgrounds"
+Title: "Space Backgrounds" (background.png)
 Author: scorcher24
 URL: https://opengameart.org/content/space-backgrounds
 License: CC0
 Notes: cropped `Hintergrund_Glitzern_Supernova.xcf` for `background.png`
+
+Title: "Asteroids" (asteroid.png)
+Author: phaelax
+URL: https://opengameart.org/content/asteroids
+License: CC-BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/)

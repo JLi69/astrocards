@@ -19,36 +19,6 @@ pub const CUBE: [f32; 24] = [
     0.5, 0.5, 0.5,
 ];
 
-#[rustfmt::skip]
-pub const TEX_COORDS: [f32; 8] = [
-    0.0, 0.0,
-    1.0, 0.0,
-    0.0, 1.0,
-    1.0, 1.0,
-];
-
-#[rustfmt::skip]
-//Texture coordinates for a cube
-pub const CUBE_TEX_INDICES: [u32; 36] = [
-    0, 1, 2,
-    3, 2, 1,
-
-    0, 2, 3,
-    3, 1, 0,
-
-    0, 1, 2,
-    3, 2, 1,
-
-    2, 0, 1,
-    1, 3, 2,
-
-    2, 3, 1,
-    1, 0, 2,
-
-    2, 1, 0,
-    1, 2, 3,
-];
-
 //This is for a cube
 #[rustfmt::skip]
 pub const CUBE_INDICES: [u32; 36] = [
@@ -70,9 +40,6 @@ pub const CUBE_INDICES: [u32; 36] = [
     6, 5, 4,
     5, 6, 7,
 ];
-
-//quad texture coordinates
-pub const QUAD_INDICES: [u32; 6] = [0, 1, 2, 3, 2, 1];
 
 //2D quad vertex data
 #[rustfmt::skip]

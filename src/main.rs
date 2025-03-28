@@ -13,6 +13,7 @@ fn main() {
         .expect("Failed to init window!");
     window.make_current();
     window.set_size_polling(true);
+    glfw.set_swap_interval(glfw::SwapInterval::Sync(1));
     //Load OpenGL
     gl::load_with(|s| glfw.get_proc_address_raw(s));
 
@@ -23,13 +24,16 @@ fn main() {
     //Load assets
     gamestate.load_assets();
     gamestate.init_window_dimensions(window.get_size());
-   
+  
+    let mut dt = 0.0f32;
     gfx::set_default_gl_state();
     while !window.should_close() {
+        let start = std::time::Instant::now();
         //Clear screen
         gfx::clear();
 
         gamestate.draw();
+        gamestate.update(dt);
 
         //Print OpenGL errors
         gfx::get_gl_errors();
@@ -38,5 +42,6 @@ fn main() {
         window.swap_buffers();
         //Handle events
         gamestate.process_events(&events);
+        dt = start.elapsed().as_secs_f32();
     }
 }

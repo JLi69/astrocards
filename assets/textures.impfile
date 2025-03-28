@@ -5,3 +5,7 @@
 "background" {
 	"path" = "assets/textures/background.png";
 }
+
+"asteroid" {
+	"path" = "assets/textures/asteroid.png";
+}

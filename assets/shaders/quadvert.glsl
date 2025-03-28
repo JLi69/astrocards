@@ -10,5 +10,6 @@ uniform mat4 transform;
 void main() {
 	tc = pos.xy * 0.5 + vec2(0.5, 0.5);
 	tc.y = 1.0 - tc.y;
-	gl_Position = screen * transform * pos;
+	vec4 scaled = vec4(pos.xy * 0.5, 0.0, 1.0);
+	gl_Position = screen * transform * scaled;
 }
