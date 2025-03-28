@@ -9,3 +9,7 @@
 "asteroid" {
 	"path" = "assets/textures/asteroid.png";
 }
+
+"fire" {
+	"path" = "assets/textures/explosionparticle.png";
+}

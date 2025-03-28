@@ -36,6 +36,6 @@ impl Asteroid {
 
     pub fn update(&mut self, dt: f32, speed: f32) {
         self.sprite.y -= speed * dt;
-        self.rotation += dt * std::f32::consts::PI / 8.0;
+        self.rotation += dt * std::f32::consts::PI / 4.0;
     }
 }

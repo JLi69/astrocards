@@ -7,3 +7,8 @@
 	"vert" = "assets/shaders/quadvert.glsl";
 	"frag" = "assets/shaders/quadfrag.glsl";
 }
+
+"flameshader" {
+	"vert" = "assets/shaders/flamevert.glsl";
+	"frag" = "assets/shaders/flamefrag.glsl";
+}

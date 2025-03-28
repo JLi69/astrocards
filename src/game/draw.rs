@@ -1,7 +1,7 @@
 use cgmath::{Matrix4, Vector3, Rad};
 use crate::assets::shader::ShaderProgram;
 
-use super::{Game, assets::models::draw_elements};
+use super::{Game, assets::models::{draw_elements, draw_elements_instanced}};
 
 pub const CANVAS_W: f32 = 960.0;
 pub const CANVAS_H: f32 = 540.0;
@@ -40,6 +40,18 @@ fn draw_asteroids(gamestate: &Game, shader: &ShaderProgram) {
     }
 }
 
+fn draw_asteroids_flame(gamestate: &Game, shader: &ShaderProgram) {
+    gamestate.textures.bind("fire");
+    let quad = gamestate.models.bind("quad2d");
+    for asteroid in &gamestate.asteroids {
+        let translate = Vector3::new(asteroid.sprite.x, asteroid.sprite.y, 0.0);
+        let transform = Matrix4::from_translation(translate) *
+            Matrix4::from_nonuniform_scale(40.0, 40.0, 1.0);
+        shader.uniform_matrix4f("transform", &transform);
+        draw_elements_instanced(quad.clone(), 128);
+    }
+}
+
 impl Game {
     pub fn draw(&self) {
         let screen_mat = calculate_screen_mat(self.window_w, self.window_h);
@@ -47,7 +59,15 @@ impl Game {
         shader.uniform_matrix4f("screen", &screen_mat);
         //Draw the background
         draw_background(self, &shader);
+
+        //Draw asteroid flames
+        let flameshader = self.shaders.use_program("flameshader");
+        flameshader.uniform_float("time", self.time());
+        flameshader.uniform_matrix4f("screen", &screen_mat);
+        draw_asteroids_flame(self, &flameshader);
+
         //Draw asteroids
-        draw_asteroids(self, &shader);
+        shader.use_program();
+        draw_asteroids(self, &shader); 
     }
 }

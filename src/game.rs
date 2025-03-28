@@ -31,6 +31,7 @@ pub struct Game {
     asteroid_spawn_timer: f32,
     spawn_interval: f32,
     asteroids: Vec<Asteroid>,
+    time: f32,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -56,6 +57,7 @@ impl Game {
             asteroid_spawn_timer: 0.0,
             spawn_interval: DEFAULT_SPAWN_INTERVAL,
             asteroids: vec![],
+            time: 0.0,
         }
     }
 
@@ -82,5 +84,9 @@ impl Game {
         let (w, h) = dimensions;
         self.window_w = w;
         self.window_h = h;
+    }
+
+    pub fn time(&self) -> f32 {
+        self.time
     }
 }
