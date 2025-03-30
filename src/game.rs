@@ -12,6 +12,7 @@ use glfw::{GlfwReceiver, WindowEvent};
 use sprite::{Asteroid, Explosion};
 
 const DEFAULT_SPAWN_INTERVAL: f32 = 8.0;
+const DEFAULT_HEALTH: u32 = 5;
 
 //Application config values, these are not meant to be changed by normal users
 #[derive(Default)]
@@ -35,6 +36,10 @@ pub struct Game {
     time: f32,
     pub answer: String,
     pub flashcards: Vec<Flashcard>,
+    //Player info
+    pub health: u32,
+    pub score: u64,
+    pub level: u32,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -64,6 +69,9 @@ impl Game {
             time: 0.0,
             answer: String::new(),
             flashcards: vec![],
+            health: DEFAULT_HEALTH,
+            score: 0,
+            level: 1,
         }
     }
 

@@ -6,7 +6,7 @@ use super::{
 };
 
 const ASTEROID_SIZE: f32 = 80.0;
-const DEFAULT_ASTEROID_SPEED: f32 = CANVAS_H / 32.0;
+const DEFAULT_ASTEROID_SPEED: f32 = CANVAS_H / 25.0;
 pub const EXPLOSION_LIFETIME: f32 = 1.0; //1 second
 
 impl Game {

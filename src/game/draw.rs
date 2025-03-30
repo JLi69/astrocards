@@ -1,5 +1,6 @@
-use crate::assets::shader::ShaderProgram;
+use crate::{assets::shader::ShaderProgram, gui::gui_pos};
 use cgmath::{Matrix4, Rad, Vector3};
+use egui_gl_glfw::egui::vec2;
 
 use super::{
     Game,
@@ -101,6 +102,26 @@ fn draw_explosions(gamestate: &Game, shader: &ShaderProgram) {
     }
 }
 
+fn display_icon(
+    gamestate: &Game,
+    shader: &ShaderProgram,
+    icon_name: &str,
+    x: f32,
+    y: f32,
+    w: f32,
+    h: f32
+) {
+    let scale = calculate_screen_scale(gamestate.window_w, gamestate.window_h) * 2.0;
+    let pos = gui_pos(x, y, gamestate.window_w, gamestate.window_h)
+        - vec2(gamestate.window_w as f32, -gamestate.window_h as f32) / scale;
+    let transform = Matrix4::from_translation(Vector3::new(pos.x, pos.y, 0.0))
+        * Matrix4::from_nonuniform_scale(w, h, 1.0);
+    gamestate.textures.bind(icon_name);
+    shader.uniform_matrix4f("transform", &transform);
+    let quad = gamestate.models.bind("quad2d");
+    draw_elements(quad);
+}
+
 impl Game {
     pub fn draw(&self) {
         let screen_mat = calculate_screen_mat(self.window_w, self.window_h);
@@ -126,7 +147,11 @@ impl Game {
         //Draw explosions
         let explosionshader = self.shaders.use_program("explosionshader");
         explosionshader.uniform_matrix4f("screen", &screen_mat);
-        draw_explosions(self, &explosionshader);
+        draw_explosions(self, &explosionshader); 
+
+        //Display heart icon (for gui)
+        shader.use_program();
+        display_icon(self, &shader, "hearticon", 24.0, 26.0, 24.0, 24.0);
 
         //Unbind textures
         unsafe {

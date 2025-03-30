@@ -28,3 +28,9 @@ Title: Smoke particle assets (explosionparticle.png)
 Author: Kenney (https://www.kenney.nl)
 URL: https://opengameart.org/content/smoke-particle-assets
 License: CC0
+
+Title: Health (hearticon.png)
+Author: knik1985
+URL: https://opengameart.org/content/health
+License: CC-BY 3.0 (https://creativecommons.org/licenses/by/3.0/)
+Notes: Cropped out full heart and scaled down image for `hearticon.png`

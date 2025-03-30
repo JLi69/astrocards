@@ -37,28 +37,24 @@ pub struct GuiController {
     input_state: EguiInputState,
 }
 
+pub fn world_to_eguipos(x: f32, y: f32, w: i32, h: i32) -> Pos2 {
+    let pos = Vector4::new(x / CANVAS_W, y / CANVAS_H, 0.0, 1.0);
+    let canvas_pos = pos + Vector4::new(0.5, 0.5, 0.0, 0.0);
+
+    let screen_scale = calculate_screen_scale(w, h);
+    //Calculate the text position on the screen
+    let (dx, dy) = caclulate_canv_offset(w, h);
+    let tx = CANVAS_W * canvas_pos.x + dx / screen_scale;
+    let ty = CANVAS_H * (1.0 - canvas_pos.y) + dy / screen_scale;
+    Pos2::new(tx, ty)
+}
+
 fn display_asteroid_text(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
     let painter = ui.painter();
     let font_id = FontId::new(16.0, egui::FontFamily::Monospace);
-    let screen_scale = calculate_screen_scale(w, h);
     for asteroid in &gamestate.asteroids {
-        //Convert the position of the asteroid to screen position
-        let pos = Vector4::new(
-            asteroid.sprite.x / CANVAS_W,
-            asteroid.sprite.y / CANVAS_H,
-            0.0,
-            1.0,
-        );
-        let canvas_pos = pos + Vector4::new(0.5, 0.5, 0.0, 0.0);
-
-        //Calculate the text position on the screen
-        let (dx, dy) = caclulate_canv_offset(w, h);
-        let tx = CANVAS_W * canvas_pos.x + dx / screen_scale;
-        let ty = CANVAS_H * (1.0 - canvas_pos.y) + dy / screen_scale;
-        let text_pos = Pos2::new(tx, ty);
-
+        let text_pos = world_to_eguipos(asteroid.sprite.x, asteroid.sprite.y, w, h);
         //Display the text
-        //TODO: replace test text
         painter.text(
             text_pos,
             Align2::CENTER_CENTER,
@@ -67,6 +63,42 @@ fn display_asteroid_text(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
             Color32::WHITE,
         );
     }
+}
+
+pub fn gui_pos(x: f32, y: f32, w: i32, h: i32) -> Pos2 {
+    let screen_scale = calculate_screen_scale(w, h);
+    let corner = vec2(-w as f32 / 2.0, -h as f32 / 2.0) / screen_scale;
+    world_to_eguipos(x, y, w, h) + corner
+}
+
+fn display_hud(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
+    let painter = ui.painter();
+    let font_id = FontId::new(16.0, egui::FontFamily::Monospace);
+
+    //Display health 
+    painter.text(
+        gui_pos(40.0, -16.0, w, h),
+        Align2::LEFT_TOP,
+        format!("{}", gamestate.health),
+        font_id.clone(),
+        Color32::WHITE,
+    );
+    //Display score 
+    painter.text(
+        gui_pos(16.0, -40.0, w, h),
+        Align2::LEFT_TOP,
+        format!("SCORE: {}", gamestate.score),
+        font_id.clone(),
+        Color32::WHITE,
+    );
+    //Display level
+    painter.text(
+        gui_pos(16.0, -64.0, w, h),
+        Align2::LEFT_TOP,
+        format!("LEVEL: {}", gamestate.level),
+        font_id.clone(),
+        Color32::WHITE,
+    );
 }
 
 impl GuiController {
@@ -96,14 +128,17 @@ impl GuiController {
     //Display and update game gui
     pub fn display_game_gui(&mut self, gamestate: &mut Game, w: i32, h: i32) {
         let pixels_per_point = self.input_state.pixels_per_point;
-        self.ctx.set_pixels_per_point(pixels_per_point);
+        if self.ctx.pixels_per_point() != pixels_per_point {
+            self.ctx.set_pixels_per_point(pixels_per_point);
+        }
         self.ctx.begin_pass(self.input_state.input.take());
 
         //Display asteroid textures
         egui::CentralPanel::default()
             .frame(egui::Frame::none())
             .show(&self.ctx, |ui| {
-                display_asteroid_text(gamestate, ui, w, h);
+                display_asteroid_text(gamestate, ui, w, h); 
+                display_hud(gamestate, ui, w, h);
             });
 
         //Answer input box

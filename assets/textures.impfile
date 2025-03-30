@@ -13,3 +13,7 @@
 "fire" {
 	"path" = "assets/textures/explosionparticle.png";
 }
+
+"hearticon" {
+	"path" = "assets/textures/hearticon.png";
+}
