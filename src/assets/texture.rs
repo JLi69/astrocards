@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::os::raw::c_void;
 
+#[allow(dead_code)]
 pub fn load_image_pixels(path: &str) -> Result<(Vec<u32>, png::OutputInfo), String> {
     let file = File::open(path).map_err(|e| e.to_string())?;
     let decoder = png::Decoder::new(file);
@@ -82,12 +83,14 @@ impl Texture {
         }
     }
 
+    #[allow(dead_code)]
     pub fn gen_texture(&mut self) {
         unsafe {
             gl::GenTextures(1, &mut self.id);
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_id(&self) -> u32 {
         self.id
     }

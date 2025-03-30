@@ -3,7 +3,7 @@ pub mod draw;
 pub mod sprite;
 pub mod update;
 
-use crate::{gui::GuiController, impfile};
+use crate::{gui::GuiController, impfile, flashcards::Flashcard};
 use assets::models::ModelManager;
 use assets::shaders::ShaderManager;
 use assets::textures::TextureManager;
@@ -11,7 +11,7 @@ use egui_gl_glfw::egui::FontDefinitions;
 use glfw::{GlfwReceiver, WindowEvent};
 use sprite::{Asteroid, Explosion};
 
-const DEFAULT_SPAWN_INTERVAL: f32 = 16.0;
+const DEFAULT_SPAWN_INTERVAL: f32 = 8.0;
 
 //Application config values, these are not meant to be changed by normal users
 #[derive(Default)]
@@ -34,6 +34,7 @@ pub struct Game {
     pub explosions: Vec<Explosion>,
     time: f32,
     pub answer: String,
+    pub flashcards: Vec<Flashcard>,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -62,6 +63,7 @@ impl Game {
             explosions: vec![],
             time: 0.0,
             answer: String::new(),
+            flashcards: vec![],
         }
     }
 
@@ -91,8 +93,20 @@ impl Game {
     }
 
     pub fn submit_answer(&mut self) {
-        //TODO: get asteroids that have the same string as an 'answer' as the
-        //string that was submitted
+        //Destroy asteroids
+        for asteroid in &mut self.asteroids {
+            //ignore asteroids that are off-screen
+            if asteroid.above_top() {
+                continue;
+            }
+
+            if asteroid.flashcard.answer == self.answer {
+                asteroid.deleted = true;
+                asteroid.destroyed = true;
+                //Only one asteroid can be destroyed each time
+                break;
+            }
+        }
         self.answer.clear();
     }
 

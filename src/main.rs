@@ -3,12 +3,14 @@ mod game;
 mod gfx;
 mod gui;
 mod impfile;
+mod flashcards;
 
 use game::Game;
 use glfw::{Context, WindowMode};
 use gui::GuiController;
 
 fn main() {
+    let args: Vec<String> = std::env::args().collect();
     let mut glfw = glfw::init(glfw::fail_on_errors).expect("Failed to init glfw!");
     //Init window
     let (mut window, events) = glfw
@@ -31,6 +33,8 @@ fn main() {
     //Load assets
     gamestate.load_assets();
     gamestate.init_window_dimensions(window.get_size());
+    //Load flashcards
+    gamestate.flashcards = flashcards::load_flashcards(&args[1..]);
     //gui controller
     let mut gui_controller = GuiController::init(&window);
     gui_controller.init_font(&gamestate);

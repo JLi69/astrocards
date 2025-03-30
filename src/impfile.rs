@@ -86,6 +86,11 @@ impl Entry {
 
         res
     }
+
+    //Returns a vector of variable names and the values
+    pub fn get_var_list(&self) -> Vec<(String, String)> {
+        self.variables.iter().map(|(name, val)| (name.clone(), val.clone())).collect()
+    }
 }
 
 //Returns Ok if quotes are valid, returns an Err if quotes are invalid

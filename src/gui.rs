@@ -62,7 +62,7 @@ fn display_asteroid_text(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
         painter.text(
             text_pos,
             Align2::CENTER_CENTER,
-            "[TEST]áéíóúàèìòù",
+            &asteroid.flashcard.question,
             font_id.clone(),
             Color32::WHITE,
         );

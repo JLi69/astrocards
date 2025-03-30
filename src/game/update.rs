@@ -1,3 +1,4 @@
+use crate::flashcards::Flashcard;
 use super::{
     Game,
     draw::{CANVAS_H, CANVAS_W},
@@ -9,6 +10,14 @@ const DEFAULT_ASTEROID_SPEED: f32 = CANVAS_H / 32.0;
 pub const EXPLOSION_LIFETIME: f32 = 1.0; //1 second
 
 impl Game {
+    pub fn get_random_card(&self) -> Flashcard {
+        if self.flashcards.is_empty() {
+            Flashcard::none()
+        } else {
+            self.flashcards[rand::random_range(0..self.flashcards.len())].clone()
+        }
+    }
+
     pub fn spawn_asteroid(&mut self, dt: f32) {
         self.asteroid_spawn_timer -= dt;
         if self.asteroid_spawn_timer > 0.0 {
@@ -22,15 +31,17 @@ impl Game {
             let x = rand::random::<f32>() * range + ASTEROID_SIZE - CANVAS_W / 2.0;
             let y = CANVAS_H + ASTEROID_SIZE + rand::random::<f32>() * 320.0;
             let rotation = rand::random::<f32>() * std::f32::consts::PI * 2.0;
+            let flashcard = self.get_random_card();
             self.asteroids
-                .push(Asteroid::new(x, y, ASTEROID_SIZE, rotation));
+                .push(Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard));
         }
 
         let x = rand::random::<f32>() * range + ASTEROID_SIZE - CANVAS_W / 2.0;
         let y = CANVAS_H / 2.0 + ASTEROID_SIZE / 2.0;
         let rotation = rand::random::<f32>() * std::f32::consts::PI * 2.0;
+        let flashcard = self.get_random_card();
         self.asteroids
-            .push(Asteroid::new(x, y, ASTEROID_SIZE, rotation));
+            .push(Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard));
     }
 
     pub fn update(&mut self, dt: f32) {
@@ -66,7 +77,7 @@ impl Game {
             }
 
             //Add explosion
-            if asteroid.at_bottom() {
+            if asteroid.at_bottom() || asteroid.destroyed {
                 let (x, y) = (asteroid.sprite.x, asteroid.sprite.y);
                 self.explosions.push(Explosion::new(x, y));
             }

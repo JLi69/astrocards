@@ -1,0 +1,11 @@
+# Test impfile of flashcards
+
+"flashcards" {
+	# Test accent marks
+	"áéíóúàèìòù" = "ans";
+	# Answer with flashcards
+	"accents" = "áéíóú";
+	"hello" = "world";
+	"fizz" = "buzz";
+	"foo" = "bar";
+}
