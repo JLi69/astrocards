@@ -39,7 +39,7 @@ pub struct Game {
     //Player info
     pub health: u32,
     pub score: u64,
-    pub level: u32,
+    pub level: u64,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -111,6 +111,7 @@ impl Game {
             if asteroid.flashcard.answer == self.answer {
                 asteroid.deleted = true;
                 asteroid.destroyed = true;
+                self.score += 100 * self.level;
                 //Only one asteroid can be destroyed each time
                 break;
             }

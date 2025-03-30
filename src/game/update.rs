@@ -76,6 +76,11 @@ impl Game {
                 continue;
             }
 
+            //If the asteroid hits the bottom of the screen, lose health
+            if asteroid.at_bottom() && self.health > 0 {
+                self.health -= 1;
+            }
+
             //Add explosion
             if asteroid.at_bottom() || asteroid.destroyed {
                 let (x, y) = (asteroid.sprite.x, asteroid.sprite.y);
