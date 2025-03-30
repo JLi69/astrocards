@@ -189,9 +189,9 @@ dependencies = [
 
 [[package]]
 name = "egui_gl_glfw"
-version = "0.1.9"
+version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85d2f2b115826e3c07e2e79cfd3cb259ab7670db5070e8092af5c0b0a027f5d4"
+checksum = "be7470ecd72f33003ca4fc36aff8068e289b728462af5af31d50e7e52bae730d"
 dependencies = [
  "cli-clipboard",
  "egui",
@@ -533,9 +533,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.21.2"
+version = "1.21.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c2806eaa3524762875e21c3dcd057bc4b7bfa01ce4da8d46be1cd43649e1cc6b"
+checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
 
 [[package]]
 name = "os_pipe"

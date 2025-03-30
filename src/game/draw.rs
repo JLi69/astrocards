@@ -11,13 +11,42 @@ pub const CANVAS_W: f32 = 960.0;
 pub const CANVAS_H: f32 = 540.0;
 const ASPECT: f32 = CANVAS_W / CANVAS_H;
 
-fn calculate_screen_mat(w: i32, h: i32) -> Matrix4<f32> {
+pub fn calculate_screen_mat(w: i32, h: i32) -> Matrix4<f32> {
     let (w, h) = (w as f32, h as f32);
     if w < h * ASPECT {
         Matrix4::from_nonuniform_scale((h / CANVAS_H) / w * 2.0, (h / CANVAS_H) / h * 2.0, 1.0)
     } else {
         Matrix4::from_nonuniform_scale((w / CANVAS_W) / w * 2.0, (w / CANVAS_W) / h * 2.0, 1.0)
     }
+}
+
+pub fn calculate_screen_scale(w: i32, h: i32) -> f32 {
+    let (w, h) = (w as f32, h as f32);
+    if w < h * ASPECT {
+        h / CANVAS_H
+    } else {
+        w / CANVAS_W
+    }
+}
+
+pub fn caclulate_canv_offset(w: i32, h: i32) -> (f32, f32) {
+    let (w, h) = (w as f32, h as f32);
+    if w < h * ASPECT {
+        (-(h * ASPECT - w) / 2.0, 0.0)
+    } else {
+        (0.0, -(w / ASPECT - h) / 2.0)
+    }
+}
+
+//For debugging the font texture
+//Assumes the font texture has already been bound and uses that texture when
+//displaying the debug quad
+#[allow(dead_code)]
+fn debug_quad(gamestate: &Game, shader: &ShaderProgram) {
+    let transform = Matrix4::from_nonuniform_scale(CANVAS_W, 100.0, 1.0);
+    shader.uniform_matrix4f("transform", &transform);
+    let quad = gamestate.models.bind("quad2d");
+    draw_elements(quad);
 }
 
 //Display background
@@ -49,6 +78,8 @@ fn draw_asteroids_flame(gamestate: &Game, shader: &ShaderProgram) {
     let quad = gamestate.models.bind("quad2d");
     for asteroid in &gamestate.asteroids {
         let translate = Vector3::new(asteroid.sprite.x, asteroid.sprite.y, 0.0);
+        let perc = (-(-CANVAS_H / 2.0 - asteroid.sprite.y) * 2.0 / CANVAS_H).clamp(0.0, 1.0);
+        shader.uniform_float("alpha", perc);
         let transform =
             Matrix4::from_translation(translate) * Matrix4::from_nonuniform_scale(40.0, 40.0, 1.0);
         shader.uniform_matrix4f("transform", &transform);
@@ -75,6 +106,10 @@ impl Game {
         let screen_mat = calculate_screen_mat(self.window_w, self.window_h);
         let shader = self.shaders.use_program("quadshader");
         shader.uniform_matrix4f("screen", &screen_mat);
+
+        //For debug purposes
+        //debug_quad(self, &shader);
+
         //Draw the background
         draw_background(self, &shader);
 
@@ -92,5 +127,10 @@ impl Game {
         let explosionshader = self.shaders.use_program("explosionshader");
         explosionshader.uniform_matrix4f("screen", &screen_mat);
         draw_explosions(self, &explosionshader);
+
+        //Unbind textures
+        unsafe {
+            gl::BindTexture(gl::TEXTURE_2D, 0);
+        }
     }
 }

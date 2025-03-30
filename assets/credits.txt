@@ -22,6 +22,7 @@ Title: "Asteroids" (asteroid.png)
 Author: phaelax
 URL: https://opengameart.org/content/asteroids
 License: CC-BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/)
+Notes: darkened asteroid texture.
 
 Title: Smoke particle assets (explosionparticle.png)
 Author: Kenney (https://www.kenney.nl)

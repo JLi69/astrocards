@@ -3,7 +3,7 @@ pub mod draw;
 pub mod sprite;
 pub mod update;
 
-use crate::impfile;
+use crate::{gui::GuiController, impfile};
 use assets::models::ModelManager;
 use assets::shaders::ShaderManager;
 use assets::textures::TextureManager;
@@ -30,9 +30,10 @@ pub struct Game {
     //Sprites
     asteroid_spawn_timer: f32,
     spawn_interval: f32,
-    asteroids: Vec<Asteroid>,
-    explosions: Vec<Explosion>,
+    pub asteroids: Vec<Asteroid>,
+    pub explosions: Vec<Explosion>,
     time: f32,
+    pub answer: String,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -60,6 +61,7 @@ impl Game {
             asteroids: vec![],
             explosions: vec![],
             time: 0.0,
+            answer: String::new(),
         }
     }
 
@@ -73,13 +75,25 @@ impl Game {
         self.cfg.font_path = e.get_var("font_path");
     }
 
-    pub fn process_events(&mut self, events: &EventHandler) {
+    pub fn process_events(&mut self, events: &EventHandler, gui_controller: &mut GuiController) {
         for (_, event) in glfw::flush_messages(events) {
             match event {
                 WindowEvent::Size(w, h) => handle_window_resize(self, w, h),
+                WindowEvent::Key(glfw::Key::Enter, _, glfw::Action::Press, _) => {
+                    //Clear answer
+                    self.submit_answer();
+                    continue;
+                }
                 _ => {}
             }
+            gui_controller.handle_window_event(event);
         }
+    }
+
+    pub fn submit_answer(&mut self) {
+        //TODO: get asteroids that have the same string as an 'answer' as the
+        //string that was submitted
+        self.answer.clear();
     }
 
     pub fn init_window_dimensions(&mut self, dimensions: (i32, i32)) {
