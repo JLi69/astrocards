@@ -3,7 +3,7 @@ pub mod draw;
 pub mod sprite;
 pub mod update;
 
-use crate::{gui::GuiController, impfile, flashcards::Flashcard};
+use crate::{flashcards::Flashcard, gui::GuiController, impfile};
 use assets::models::ModelManager;
 use assets::shaders::ShaderManager;
 use assets::textures::TextureManager;
@@ -101,6 +101,11 @@ impl Game {
     }
 
     pub fn submit_answer(&mut self) {
+        //Ignore if game over
+        if self.game_over() {
+            return;
+        }
+
         //Destroy asteroids
         for asteroid in &mut self.asteroids {
             //ignore asteroids that are off-screen

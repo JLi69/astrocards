@@ -1,9 +1,9 @@
 mod assets;
+mod flashcards;
 mod game;
 mod gfx;
 mod gui;
 mod impfile;
-mod flashcards;
 
 use game::Game;
 use glfw::{Context, WindowMode};

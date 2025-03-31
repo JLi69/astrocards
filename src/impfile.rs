@@ -89,7 +89,10 @@ impl Entry {
 
     //Returns a vector of variable names and the values
     pub fn get_var_list(&self) -> Vec<(String, String)> {
-        self.variables.iter().map(|(name, val)| (name.clone(), val.clone())).collect()
+        self.variables
+            .iter()
+            .map(|(name, val)| (name.clone(), val.clone()))
+            .collect()
     }
 }
 

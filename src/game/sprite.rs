@@ -2,8 +2,8 @@
  * This file contains code for various sprites in the game
  * */
 
-use crate::flashcards::Flashcard;
 use super::draw::CANVAS_H;
+use crate::flashcards::Flashcard;
 
 #[derive(Clone)]
 pub struct Sprite2D {

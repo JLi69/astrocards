@@ -109,7 +109,7 @@ fn display_icon(
     x: f32,
     y: f32,
     w: f32,
-    h: f32
+    h: f32,
 ) {
     let scale = calculate_screen_scale(gamestate.window_w, gamestate.window_h) * 2.0;
     let pos = gui_pos(x, y, gamestate.window_w, gamestate.window_h)
@@ -147,7 +147,7 @@ impl Game {
         //Draw explosions
         let explosionshader = self.shaders.use_program("explosionshader");
         explosionshader.uniform_matrix4f("screen", &screen_mat);
-        draw_explosions(self, &explosionshader); 
+        draw_explosions(self, &explosionshader);
 
         //Display heart icon (for gui)
         shader.use_program();

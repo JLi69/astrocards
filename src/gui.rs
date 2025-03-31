@@ -1,7 +1,7 @@
 use crate::game::Game;
 use crate::game::draw::{CANVAS_H, CANVAS_W, caclulate_canv_offset, calculate_screen_scale};
 use cgmath::Vector4;
-use egui_backend::egui;
+use egui_backend::egui::{self, RichText};
 use egui_backend::egui::{Align2, Color32, FontId, Pos2, RawInput, Rect, Ui, vec2};
 use egui_backend::{EguiInputState, Painter};
 use egui_gl_glfw as egui_backend;
@@ -75,7 +75,7 @@ fn display_hud(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
     let painter = ui.painter();
     let font_id = FontId::new(16.0, egui::FontFamily::Monospace);
 
-    //Display health 
+    //Display health
     painter.text(
         gui_pos(40.0, -16.0, w, h),
         Align2::LEFT_TOP,
@@ -83,7 +83,7 @@ fn display_hud(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
         font_id.clone(),
         Color32::WHITE,
     );
-    //Display score 
+    //Display score
     painter.text(
         gui_pos(16.0, -40.0, w, h),
         Align2::LEFT_TOP,
@@ -137,7 +137,7 @@ impl GuiController {
         egui::CentralPanel::default()
             .frame(egui::Frame::none())
             .show(&self.ctx, |ui| {
-                display_asteroid_text(gamestate, ui, w, h); 
+                display_asteroid_text(gamestate, ui, w, h);
                 display_hud(gamestate, ui, w, h);
             });
 
@@ -154,6 +154,54 @@ impl GuiController {
                     ui.text_edit_singleline(&mut gamestate.answer);
                 })
             });
+
+        //Display game over screen
+        if gamestate.game_over() {
+            let width = w as f32 / pixels_per_point;
+            let height = h as f32 / pixels_per_point;
+            egui::Window::new("game_over_screen")
+                .frame(egui::Frame::none().fill(Color32::from_rgba_unmultiplied(255, 0, 0, 128)))
+                .movable(false)
+                .title_bar(false)
+                .scroll(true)
+                .fixed_size(vec2(width, height))
+                .fixed_pos(Pos2::new(0.0, 0.0))
+                .show(&self.ctx, |ui| {
+                    ui.vertical_centered(|ui| {
+                        ui.add_space(height / 4.0);
+                        ui.label(RichText::new("Game Over!").size(64.0).color(Color32::WHITE));
+                        let final_score = format!("Final Score: {}", gamestate.score);
+                        ui.label(RichText::new(final_score).size(16.0).color(Color32::WHITE));
+                        let final_level = format!("Final Level: {}", gamestate.level);
+                        ui.label(RichText::new(final_level).size(16.0).color(Color32::WHITE));
+                        ui.add_space(height / 32.0);
+                        if ui
+                            .button(
+                                RichText::new("  Restart  ")
+                                    .size(20.0)
+                                    .color(Color32::WHITE),
+                            )
+                            .clicked()
+                        {
+                            //Restart session
+                            //TODO implement restart
+                            eprintln!("Restart.");
+                        }
+                        if ui
+                            .button(
+                                RichText::new(" Main Menu ")
+                                    .size(20.0)
+                                    .color(Color32::WHITE),
+                            )
+                            .clicked()
+                        {
+                            //Go to main menu
+                            //TODO implement main menu
+                            eprintln!("Main menu.");
+                        }
+                    })
+                });
+        }
 
         //End frame
         let egui::FullOutput {

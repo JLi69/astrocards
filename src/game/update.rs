@@ -1,9 +1,9 @@
-use crate::flashcards::Flashcard;
 use super::{
     Game,
     draw::{CANVAS_H, CANVAS_W},
     sprite::{Asteroid, Explosion},
 };
+use crate::flashcards::Flashcard;
 
 const ASTEROID_SIZE: f32 = 80.0;
 const DEFAULT_ASTEROID_SPEED: f32 = CANVAS_H / 25.0;
@@ -44,8 +44,30 @@ impl Game {
             .push(Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard));
     }
 
+    //Returns if its game over
+    pub fn game_over(&self) -> bool {
+        self.health == 0
+    }
+
     pub fn update(&mut self, dt: f32) {
         self.time += dt;
+
+        //Update explosions
+        for explosion in &mut self.explosions {
+            explosion.update(dt);
+        }
+        //Delete explosions
+        self.explosions = self
+            .explosions
+            .iter()
+            .filter(|e| e.time < EXPLOSION_LIFETIME)
+            .cloned()
+            .collect();
+
+        //Stop updating if game over
+        if self.game_over() {
+            return;
+        }
 
         //Spawn asteroids
         self.spawn_asteroid(dt);
@@ -54,19 +76,6 @@ impl Game {
         for asteroid in &mut self.asteroids {
             asteroid.update(dt, DEFAULT_ASTEROID_SPEED);
         }
-
-        //Update explosions
-        for explosion in &mut self.explosions {
-            explosion.update(dt);
-        }
-
-        //Delete explosions
-        self.explosions = self
-            .explosions
-            .iter()
-            .filter(|e| e.time < EXPLOSION_LIFETIME)
-            .cloned()
-            .collect();
 
         //Delete asteroids
         let mut keep = vec![];
