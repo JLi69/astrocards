@@ -13,6 +13,7 @@ use sprite::{Asteroid, Explosion};
 
 const DEFAULT_SPAWN_INTERVAL: f32 = 8.0;
 const DEFAULT_HEALTH: u32 = 5;
+pub const LEVELUP_ANIMATION_LENGTH: f32 = 2.0; //In seconds
 
 //Application config values, these are not meant to be changed by normal users
 #[derive(Default)]
@@ -60,6 +61,7 @@ pub struct Game {
     //Every time the player destroys an asteroid, this decreases by 1
     //When this hits 0, advance to the next level
     asteroids_until_next_level: u32,
+    pub levelup_animation_timer: f32,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -93,6 +95,7 @@ impl Game {
             score: 0,
             level: 1,
             asteroids_until_next_level: calculate_asteroids_until_next(1),
+            levelup_animation_timer: 0.0,
         }
     }
 
@@ -155,13 +158,20 @@ impl Game {
         //Check if we advanced to the next level
         if self.asteroids_until_next_level == 0 {
             self.level += 1;
-            self.asteroids = self.asteroids.iter()
+            self.asteroids = self
+                .asteroids
+                .iter()
                 .filter(|asteroid| asteroid.destroyed)
                 .cloned()
                 .collect();
             self.asteroids_until_next_level = calculate_asteroids_until_next(self.level);
             self.spawn_interval = calculate_spawn_interval(self.level);
+            self.levelup_animation_timer = LEVELUP_ANIMATION_LENGTH;
         }
+    }
+
+    pub fn levelup_animation_perc(&self) -> f32 {
+        1.0 - self.levelup_animation_timer / LEVELUP_ANIMATION_LENGTH
     }
 
     pub fn init_window_dimensions(&mut self, dimensions: (i32, i32)) {

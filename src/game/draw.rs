@@ -61,9 +61,9 @@ fn draw_background(gamestate: &Game, shader: &ShaderProgram) {
 
 //Display background planet
 fn draw_planet(gamestate: &Game, shader: &ShaderProgram) {
-    let transform = Matrix4::from_translation(Vector3::new(0.0, -CANVAS_H / 2.0, 0.0)) *
-        Matrix4::from_angle_z(Rad(std::f32::consts::PI / 24.0 * gamestate.time())) *
-        Matrix4::from_nonuniform_scale(700.0, 700.0, 1.0);
+    let transform = Matrix4::from_translation(Vector3::new(0.0, -CANVAS_H / 2.0, 0.0))
+        * Matrix4::from_angle_z(Rad(std::f32::consts::PI / 24.0 * gamestate.time()))
+        * Matrix4::from_nonuniform_scale(700.0, 700.0, 1.0);
     gamestate.textures.bind("planet");
     shader.uniform_matrix4f("transform", &transform);
     let quad = gamestate.models.bind("quad2d");

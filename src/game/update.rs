@@ -67,6 +67,9 @@ impl Game {
 
     pub fn update(&mut self, dt: f32) {
         self.time += dt;
+        if self.levelup_animation_timer > 0.0 {
+            self.levelup_animation_timer -= dt;
+        }
 
         //Update explosions
         for explosion in &mut self.explosions {

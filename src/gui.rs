@@ -101,6 +101,34 @@ fn display_hud(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
     );
 }
 
+fn smoothstep_up(x: f32) -> f32 {
+    1.0 - (1.0 - x).powi(2)
+}
+
+fn display_levelup(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
+    if gamestate.levelup_animation_perc() <= 0.0 {
+        return;
+    }
+
+    let painter = ui.painter();
+    let font_id = FontId::new(64.0, egui::FontFamily::Monospace);
+    let perc = gamestate.levelup_animation_perc();
+    let y = if perc < 0.25 {
+        -CANVAS_H - 80.0 + (80.0 + CANVAS_H / 2.0) * smoothstep_up(perc / 0.25)
+    } else if perc >= 0.25 && perc <= 0.75 {
+        -CANVAS_H / 2.0
+    } else {
+        -CANVAS_H / 2.0 + (80.0 + CANVAS_H / 2.0) * ((perc - 0.75) / 0.25).powi(2)
+    };
+    painter.text(
+        gui_pos(CANVAS_W / 2.0, y, w, h),
+        Align2::CENTER_CENTER,
+        "LEVEL UP",
+        font_id.clone(),
+        Color32::WHITE,
+    );
+}
+
 impl GuiController {
     pub fn init(window: &Window) -> Self {
         Self {
@@ -139,6 +167,7 @@ impl GuiController {
             .show(&self.ctx, |ui| {
                 display_asteroid_text(gamestate, ui, w, h);
                 display_hud(gamestate, ui, w, h);
+                display_levelup(gamestate, ui, w, h);
             });
 
         //Answer input box
