@@ -115,7 +115,7 @@ fn display_levelup(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
     let perc = gamestate.levelup_animation_perc();
     let y = if perc < 0.25 {
         -CANVAS_H - 80.0 + (80.0 + CANVAS_H / 2.0) * smoothstep_up(perc / 0.25)
-    } else if perc >= 0.25 && perc <= 0.75 {
+    } else if (0.25..=0.75).contains(&perc) {
         -CANVAS_H / 2.0
     } else {
         -CANVAS_H / 2.0 + (80.0 + CANVAS_H / 2.0) * ((perc - 0.75) / 0.25).powi(2)
