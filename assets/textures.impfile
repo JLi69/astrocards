@@ -17,3 +17,7 @@
 "hearticon" {
 	"path" = "assets/textures/hearticon.png";
 }
+
+"planet" {
+	"path" = "assets/textures/planet.png";
+}

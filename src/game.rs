@@ -20,6 +20,23 @@ struct Config {
     font_path: String,
 }
 
+//Calculates how many asteroids are needed to advance to the next level
+//Pass in the current level
+fn calculate_asteroids_until_next(level: u32) -> u32 {
+    match level {
+        0..=2 => 7,
+        3..=5 => 10,
+        6..=8 => 15,
+        9..=12 => 20,
+        13..=15 => 25,
+        _ => 30,
+    }
+}
+
+fn calculate_spawn_interval(level: u32) -> f32 {
+    (DEFAULT_SPAWN_INTERVAL * 0.9f32.powi(level as i32)).max(2.0)
+}
+
 pub struct Game {
     pub textures: TextureManager,
     pub shaders: ShaderManager,
@@ -39,7 +56,10 @@ pub struct Game {
     //Player info
     pub health: u32,
     pub score: u64,
-    pub level: u64,
+    pub level: u32,
+    //Every time the player destroys an asteroid, this decreases by 1
+    //When this hits 0, advance to the next level
+    asteroids_until_next_level: u32,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -63,7 +83,7 @@ impl Game {
             window_w: 0,
             window_h: 0,
             asteroid_spawn_timer: 0.0,
-            spawn_interval: DEFAULT_SPAWN_INTERVAL,
+            spawn_interval: calculate_spawn_interval(1),
             asteroids: vec![],
             explosions: vec![],
             time: 0.0,
@@ -72,6 +92,7 @@ impl Game {
             health: DEFAULT_HEALTH,
             score: 0,
             level: 1,
+            asteroids_until_next_level: calculate_asteroids_until_next(1),
         }
     }
 
@@ -107,21 +128,40 @@ impl Game {
         }
 
         //Destroy asteroids
-        for asteroid in &mut self.asteroids {
+        //Find the lowest asteroid
+        let mut index = None;
+        let mut lowest_y = 999.0;
+        for (i, asteroid) in self.asteroids.iter().enumerate() {
             //ignore asteroids that are off-screen
             if asteroid.above_top() {
                 continue;
             }
 
-            if asteroid.flashcard.answer == self.answer {
-                asteroid.deleted = true;
-                asteroid.destroyed = true;
-                self.score += 100 * self.level;
-                //Only one asteroid can be destroyed each time
-                break;
+            if asteroid.flashcard.answer == self.answer && lowest_y > asteroid.sprite.y {
+                lowest_y = asteroid.sprite.y;
+                index = Some(i);
             }
         }
+
+        if let Some(index) = index {
+            self.asteroids[index].deleted = true;
+            self.asteroids[index].destroyed = true;
+            self.score += 100 * self.level as u64;
+            self.asteroids_until_next_level -= 1;
+        }
+
         self.answer.clear();
+
+        //Check if we advanced to the next level
+        if self.asteroids_until_next_level == 0 {
+            self.level += 1;
+            self.asteroids = self.asteroids.iter()
+                .filter(|asteroid| asteroid.destroyed)
+                .cloned()
+                .collect();
+            self.asteroids_until_next_level = calculate_asteroids_until_next(self.level);
+            self.spawn_interval = calculate_spawn_interval(self.level);
+        }
     }
 
     pub fn init_window_dimensions(&mut self, dimensions: (i32, i32)) {

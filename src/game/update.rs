@@ -6,8 +6,11 @@ use super::{
 use crate::flashcards::Flashcard;
 
 const ASTEROID_SIZE: f32 = 80.0;
-const DEFAULT_ASTEROID_SPEED: f32 = CANVAS_H / 25.0;
 pub const EXPLOSION_LIFETIME: f32 = 1.0; //1 second
+
+fn calculate_asteroid_speed(level: u32) -> f32 {
+    CANVAS_H / (25.0 - (level - 1) as f32).max(5.0)
+}
 
 impl Game {
     pub fn get_random_card(&self) -> Flashcard {
@@ -23,6 +26,9 @@ impl Game {
         if self.asteroid_spawn_timer > 0.0 {
             return;
         }
+        if self.asteroids_until_next_level == 0 {
+            return;
+        }
         self.asteroid_spawn_timer = self.spawn_interval;
 
         let range = CANVAS_W - ASTEROID_SIZE * 2.0;
@@ -32,16 +38,26 @@ impl Game {
             let y = CANVAS_H + ASTEROID_SIZE + rand::random::<f32>() * 320.0;
             let rotation = rand::random::<f32>() * std::f32::consts::PI * 2.0;
             let flashcard = self.get_random_card();
-            self.asteroids
-                .push(Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard));
+            let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard);
+            self.asteroids.push(new_asteroid);
+        }
+
+        //In later levels spawn a third asteroid
+        if rand::random::<u32>() % 4 == 0 && self.level >= 6 {
+            let x = rand::random::<f32>() * range + ASTEROID_SIZE - CANVAS_W / 2.0;
+            let y = CANVAS_H + ASTEROID_SIZE + rand::random::<f32>() * 320.0;
+            let rotation = rand::random::<f32>() * std::f32::consts::PI * 2.0;
+            let flashcard = self.get_random_card();
+            let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard);
+            self.asteroids.push(new_asteroid);
         }
 
         let x = rand::random::<f32>() * range + ASTEROID_SIZE - CANVAS_W / 2.0;
         let y = CANVAS_H / 2.0 + ASTEROID_SIZE / 2.0;
         let rotation = rand::random::<f32>() * std::f32::consts::PI * 2.0;
         let flashcard = self.get_random_card();
-        self.asteroids
-            .push(Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard));
+        let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard);
+        self.asteroids.push(new_asteroid);
     }
 
     //Returns if its game over
@@ -74,7 +90,7 @@ impl Game {
 
         //Update asteroids
         for asteroid in &mut self.asteroids {
-            asteroid.update(dt, DEFAULT_ASTEROID_SPEED);
+            asteroid.update(dt, calculate_asteroid_speed(self.level));
         }
 
         //Delete asteroids

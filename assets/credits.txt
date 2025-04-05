@@ -34,3 +34,8 @@ Author: knik1985
 URL: https://opengameart.org/content/health
 License: CC-BY 3.0 (https://creativecommons.org/licenses/by/3.0/)
 Notes: Cropped out full heart and scaled down image for `hearticon.png`
+
+Title: 16 Planet Sprites (planet.png)
+Author: Viktor Hahn (Viktor.Hahn@web.de)
+URL: https://opengameart.org/content/16-planet-sprites
+License: CC-BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0/)

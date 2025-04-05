@@ -57,8 +57,8 @@ impl Texture {
                 unsafe {
                     gl::GenTextures(1, &mut texture);
                     gl::BindTexture(gl::TEXTURE_2D, texture);
-                    gl::TextureParameteri(texture, gl::TEXTURE_MIN_FILTER, gl::NEAREST as i32);
-                    gl::TextureParameteri(texture, gl::TEXTURE_MAG_FILTER, gl::NEAREST as i32);
+                    gl::TextureParameteri(texture, gl::TEXTURE_MIN_FILTER, gl::LINEAR as i32);
+                    gl::TextureParameteri(texture, gl::TEXTURE_MAG_FILTER, gl::LINEAR as i32);
                     gl::TexImage2D(
                         gl::TEXTURE_2D,
                         0,
