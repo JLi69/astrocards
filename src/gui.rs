@@ -7,6 +7,12 @@ use egui_backend::{EguiInputState, Painter};
 use egui_gl_glfw as egui_backend;
 use glfw::{Window, WindowEvent};
 
+//gui action
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum GuiAction {
+    Restart,
+}
+
 //Initialized the egui input state
 pub fn init_egui_input_state(window: &Window) -> EguiInputState {
     let (w, h) = window.get_size();
@@ -154,7 +160,9 @@ impl GuiController {
     }
 
     //Display and update game gui
-    pub fn display_game_gui(&mut self, gamestate: &mut Game, w: i32, h: i32) {
+    pub fn display_game_gui(&mut self, gamestate: &mut Game, w: i32, h: i32) -> Option<GuiAction> {
+        let mut action = None;
+
         let pixels_per_point = self.input_state.pixels_per_point;
         if self.ctx.pixels_per_point() != pixels_per_point {
             self.ctx.set_pixels_per_point(pixels_per_point);
@@ -204,26 +212,19 @@ impl GuiController {
                         let final_level = format!("Final Level: {}", gamestate.level);
                         ui.label(RichText::new(final_level).size(16.0).color(Color32::WHITE));
                         ui.add_space(height / 32.0);
-                        if ui
-                            .button(
-                                RichText::new("  Restart  ")
-                                    .size(20.0)
-                                    .color(Color32::WHITE),
-                            )
-                            .clicked()
-                        {
+                        let button_text = RichText::new("  Restart  ")
+                            .size(20.0)
+                            .color(Color32::WHITE);
+                        let button = ui.button(button_text);
+                        if button.clicked() {
                             //Restart session
-                            //TODO implement restart
-                            eprintln!("Restart.");
+                            action = Some(GuiAction::Restart);
                         }
-                        if ui
-                            .button(
-                                RichText::new(" Main Menu ")
-                                    .size(20.0)
-                                    .color(Color32::WHITE),
-                            )
-                            .clicked()
-                        {
+                        let button_text = RichText::new(" Main Menu ")
+                            .size(20.0)
+                            .color(Color32::WHITE);
+                        let button = ui.button(button_text);
+                        if button.clicked() {
                             //Go to main menu
                             //TODO implement main menu
                             eprintln!("Main menu.");
@@ -250,5 +251,13 @@ impl GuiController {
         let clipped_shapes = self.ctx.tessellate(shapes, pixels_per_point);
         self.painter
             .paint_and_update_textures(pixels_per_point, &clipped_shapes, &textures_delta);
+
+        action
+    }
+}
+
+pub fn handle_gui_action(gamestate: &mut Game, action: GuiAction) {
+    match action {
+        GuiAction::Restart => gamestate.restart(),
     }
 }

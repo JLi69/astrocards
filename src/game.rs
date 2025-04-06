@@ -104,6 +104,36 @@ impl Game {
         }
     }
 
+    pub fn restart(&mut self) {
+        /*
+         * Reset values:
+         * -------------
+         * asteroid_spawn_timer: 0.0
+         * spawn_interval: calculate_spawn_interval(1)
+         * asteroids: vec![]
+         * explosions: vec![]
+         * answer: String::new()
+         * health: DEFAULT_HEALTH
+         * score: 0
+         * level: 1
+         * asteroids_until_next_level: calculate_asteroids_until_next(1)
+         * levelup_animation_timer: 0.0
+         * damage_animation_timer: 0.0
+         * */
+
+        self.asteroid_spawn_timer = 0.0;
+        self.asteroids.clear();
+        self.explosions.clear();
+        self.answer.clear();
+        self.health = DEFAULT_HEALTH;
+        self.score = 0;
+        self.level = 1;
+        self.spawn_interval = calculate_spawn_interval(self.level);
+        self.asteroids_until_next_level = calculate_asteroids_until_next(self.level);
+        self.levelup_animation_timer = 0.0;
+        self.damage_animation_timer = 0.0;
+    }
+
     pub fn load_config(&mut self, path: &str) {
         let entries = impfile::parse_file(path);
         if entries.is_empty() {

@@ -13,13 +13,11 @@ use gui::GuiController;
 fn load_icon(window: &mut glfw::Window) {
     match assets::texture::load_image_pixels("assets/icon.png") {
         Ok((pixel_data, info)) => {
-            window.set_icon_from_pixels(vec![
-                glfw::PixelImage {
-                    pixels: pixel_data,
-                    width: info.width,
-                    height: info.height,
-                }
-            ]);
+            window.set_icon_from_pixels(vec![glfw::PixelImage {
+                pixels: pixel_data,
+                width: info.width,
+                height: info.height,
+            }]);
         }
         Err(msg) => eprintln!("{msg}"),
     }
@@ -73,7 +71,11 @@ fn main() {
         gamestate.draw();
         gamestate.update(dt);
         gui::set_ui_gl_state();
-        gui_controller.display_game_gui(&mut gamestate, w, h);
+        let gui_action = gui_controller.display_game_gui(&mut gamestate, w, h);
+
+        if let Some(action) = gui_action {
+            gui::handle_gui_action(&mut gamestate, action);
+        }
 
         //Print OpenGL errors
         gfx::get_gl_errors();
