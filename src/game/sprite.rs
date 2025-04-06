@@ -34,17 +34,19 @@ pub struct Asteroid {
     //it must spawn an explosion
     pub destroyed: bool,
     pub flashcard: Flashcard,
+    pub is_red: bool,
 }
 
 impl Asteroid {
-    //x, y, size, rotation
-    pub fn new(x: f32, y: f32, sz: f32, r: f32, card: Flashcard) -> Self {
+    //x, y, size, rotation, red
+    pub fn new(x: f32, y: f32, sz: f32, r: f32, card: Flashcard, red: bool) -> Self {
         Self {
             sprite: Sprite2D::new(x, y, sz, sz),
             rotation: r,
             deleted: false,
             destroyed: false,
             flashcard: card,
+            is_red: red,
         }
     }
 

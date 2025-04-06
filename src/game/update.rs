@@ -1,5 +1,5 @@
 use super::{
-    Game,
+    DAMAGE_ANIMATION_LENGTH, Game,
     draw::{CANVAS_H, CANVAS_W},
     sprite::{Asteroid, Explosion},
 };
@@ -12,6 +12,17 @@ fn calculate_asteroid_speed(level: u32) -> f32 {
     CANVAS_H / (25.0 - (level - 1) as f32).max(5.0)
 }
 
+pub fn is_red(rand_value: u32, level: u32) -> bool {
+    match level {
+        1 => false,
+        2 => rand_value % 7 == 0,
+        3..=5 => rand_value % 10 == 0,
+        6..=8 => rand_value % 8 == 0,
+        9..=15 => rand_value % 6 == 0,
+        _ => rand_value % 5 == 0,
+    }
+}
+
 impl Game {
     pub fn get_random_card(&self) -> Flashcard {
         if self.flashcards.is_empty() {
@@ -22,6 +33,11 @@ impl Game {
     }
 
     pub fn spawn_asteroid(&mut self, dt: f32) {
+        //Do not spawn any extra asteroids if we are advancing to the next level
+        if self.asteroids_until_next_level == 0 {
+            return;
+        }
+
         self.asteroid_spawn_timer -= dt;
         if self.asteroid_spawn_timer > 0.0 {
             return;
@@ -38,7 +54,8 @@ impl Game {
             let y = CANVAS_H + ASTEROID_SIZE + rand::random::<f32>() * 320.0;
             let rotation = rand::random::<f32>() * std::f32::consts::PI * 2.0;
             let flashcard = self.get_random_card();
-            let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard);
+            let red = is_red(rand::random(), self.level);
+            let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard, red);
             self.asteroids.push(new_asteroid);
         }
 
@@ -48,7 +65,8 @@ impl Game {
             let y = CANVAS_H + ASTEROID_SIZE + rand::random::<f32>() * 320.0;
             let rotation = rand::random::<f32>() * std::f32::consts::PI * 2.0;
             let flashcard = self.get_random_card();
-            let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard);
+            let red = is_red(rand::random(), self.level);
+            let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard, red);
             self.asteroids.push(new_asteroid);
         }
 
@@ -56,7 +74,8 @@ impl Game {
         let y = CANVAS_H / 2.0 + ASTEROID_SIZE / 2.0;
         let rotation = rand::random::<f32>() * std::f32::consts::PI * 2.0;
         let flashcard = self.get_random_card();
-        let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard);
+        let red = is_red(rand::random(), self.level);
+        let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard, red);
         self.asteroids.push(new_asteroid);
     }
 
@@ -71,6 +90,10 @@ impl Game {
             self.levelup_animation_timer -= dt;
         }
 
+        if self.damage_animation_timer > 0.0 {
+            self.damage_animation_timer -= dt;
+        }
+
         //Update explosions
         for explosion in &mut self.explosions {
             explosion.update(dt);
@@ -82,6 +105,35 @@ impl Game {
             .filter(|e| e.time < EXPLOSION_LIFETIME)
             .cloned()
             .collect();
+
+        //Delete asteroids
+        let mut keep = vec![];
+        for asteroid in &self.asteroids {
+            if !asteroid.deleted {
+                keep.push(asteroid.clone());
+                continue;
+            }
+
+            //If the asteroid hits the bottom of the screen, lose health
+            if asteroid.at_bottom() && self.health > 0 {
+                self.health -= 1;
+                //If it's red, then lose instantly
+                if asteroid.is_red {
+                    self.health = 0;
+                }
+
+                if self.health > 0 {
+                    self.damage_animation_timer = DAMAGE_ANIMATION_LENGTH;
+                }
+            }
+
+            //Add explosion
+            if asteroid.at_bottom() || asteroid.destroyed {
+                let (x, y) = (asteroid.sprite.x, asteroid.sprite.y);
+                self.explosions.push(Explosion::new(x, y));
+            }
+        }
+        self.asteroids = keep;
 
         //Stop updating if game over
         if self.game_over() {
@@ -96,25 +148,6 @@ impl Game {
             asteroid.update(dt, calculate_asteroid_speed(self.level));
         }
 
-        //Delete asteroids
-        let mut keep = vec![];
-        for asteroid in &self.asteroids {
-            if !asteroid.deleted {
-                keep.push(asteroid.clone());
-                continue;
-            }
-
-            //If the asteroid hits the bottom of the screen, lose health
-            if asteroid.at_bottom() && self.health > 0 {
-                self.health -= 1;
-            }
-
-            //Add explosion
-            if asteroid.at_bottom() || asteroid.destroyed {
-                let (x, y) = (asteroid.sprite.x, asteroid.sprite.y);
-                self.explosions.push(Explosion::new(x, y));
-            }
-        }
-        self.asteroids = keep;
+        self.advance_to_next_level();
     }
 }

@@ -14,6 +14,7 @@ use sprite::{Asteroid, Explosion};
 const DEFAULT_SPAWN_INTERVAL: f32 = 8.0;
 const DEFAULT_HEALTH: u32 = 5;
 pub const LEVELUP_ANIMATION_LENGTH: f32 = 2.0; //In seconds
+pub const DAMAGE_ANIMATION_LENGTH: f32 = 1.0; //In seconds
 
 //Application config values, these are not meant to be changed by normal users
 #[derive(Default)]
@@ -25,17 +26,19 @@ struct Config {
 //Pass in the current level
 fn calculate_asteroids_until_next(level: u32) -> u32 {
     match level {
-        0..=2 => 7,
+        1 => 5,
+        2 => 7,
         3..=5 => 10,
         6..=8 => 15,
         9..=12 => 20,
         13..=15 => 25,
-        _ => 30,
+        16..=18 => 30,
+        _ => 40,
     }
 }
 
 fn calculate_spawn_interval(level: u32) -> f32 {
-    (DEFAULT_SPAWN_INTERVAL * 0.9f32.powi(level as i32)).max(2.0)
+    (DEFAULT_SPAWN_INTERVAL * 0.85f32.powi(level as i32)).max(2.0)
 }
 
 pub struct Game {
@@ -62,6 +65,7 @@ pub struct Game {
     //When this hits 0, advance to the next level
     asteroids_until_next_level: u32,
     pub levelup_animation_timer: f32,
+    pub damage_animation_timer: f32,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -96,6 +100,7 @@ impl Game {
             level: 1,
             asteroids_until_next_level: calculate_asteroids_until_next(1),
             levelup_animation_timer: 0.0,
+            damage_animation_timer: 0.0,
         }
     }
 
@@ -113,7 +118,8 @@ impl Game {
         for (_, event) in glfw::flush_messages(events) {
             match event {
                 WindowEvent::Size(w, h) => handle_window_resize(self, w, h),
-                WindowEvent::Key(glfw::Key::Enter, _, glfw::Action::Press, _) => {
+                WindowEvent::Key(glfw::Key::Enter, _, glfw::Action::Press, _)
+                | WindowEvent::Key(glfw::Key::KpEnter, _, glfw::Action::Press, _) => {
                     //Clear answer
                     self.submit_answer();
                     continue;
@@ -126,7 +132,7 @@ impl Game {
 
     pub fn submit_answer(&mut self) {
         //Ignore if game over
-        if self.game_over() {
+        if self.game_over() || self.answer.is_empty() {
             return;
         }
 
@@ -134,10 +140,15 @@ impl Game {
         //Find the lowest asteroid
         let mut index = None;
         let mut lowest_y = 999.0;
+        let mut found_red = false;
         for (i, asteroid) in self.asteroids.iter().enumerate() {
             //ignore asteroids that are off-screen
             if asteroid.above_top() {
                 continue;
+            }
+
+            if asteroid.is_red {
+                found_red = true;
             }
 
             if asteroid.flashcard.answer == self.answer && lowest_y > asteroid.sprite.y {
@@ -149,21 +160,70 @@ impl Game {
         if let Some(index) = index {
             self.asteroids[index].deleted = true;
             self.asteroids[index].destroyed = true;
-            self.score += 100 * self.level as u64;
-            self.asteroids_until_next_level -= 1;
+            if self.asteroids[index].is_red {
+                //2 times as many points if it is red
+                self.score += 200 * self.level as u64;
+            } else {
+                self.score += 100 * self.level as u64;
+            }
+            if self.asteroids_until_next_level > 0 {
+                self.asteroids_until_next_level -= 1;
+            }
+        }
+
+        //lose helath if we enter something wrong and there is a red asteroid
+        //on the screen and destroy all red asteroids on the screen
+        if found_red && index.is_none() {
+            //Destroy all red asteroids
+            for asteroid in &mut self.asteroids {
+                if asteroid.above_top() || !asteroid.is_red {
+                    continue;
+                }
+
+                asteroid.deleted = true;
+                asteroid.destroyed = true;
+            }
+
+            if self.health > 0 {
+                self.health -= 1;
+            }
+            if self.health > 0 {
+                self.damage_animation_timer = DAMAGE_ANIMATION_LENGTH;
+            }
         }
 
         self.answer.clear();
+        self.advance_to_next_level();
+    }
 
-        //Check if we advanced to the next level
+    pub fn advance_to_next_level(&mut self) {
+        if self.game_over() {
+            return;
+        }
+
+        //If we are to advance ont the next level, delete any asteroids that
+        //are above the top of the screen
         if self.asteroids_until_next_level == 0 {
-            self.level += 1;
             self.asteroids = self
                 .asteroids
                 .iter()
-                .filter(|asteroid| asteroid.destroyed)
+                .filter(|asteroid| !asteroid.above_top())
                 .cloned()
                 .collect();
+        }
+
+        //Count any non-destroyed asteroids
+        let mut count = 0;
+        for asteroid in &self.asteroids {
+            if asteroid.destroyed || asteroid.deleted {
+                continue;
+            }
+            count += 1;
+        }
+
+        //Check if we advanced to the next level
+        if self.asteroids_until_next_level == 0 && count == 0 {
+            self.level += 1;
             self.asteroids_until_next_level = calculate_asteroids_until_next(self.level);
             self.spawn_interval = calculate_spawn_interval(self.level);
             self.levelup_animation_timer = LEVELUP_ANIMATION_LENGTH;
@@ -172,6 +232,10 @@ impl Game {
 
     pub fn levelup_animation_perc(&self) -> f32 {
         1.0 - self.levelup_animation_timer / LEVELUP_ANIMATION_LENGTH
+    }
+
+    pub fn damage_animation_perc(&self) -> f32 {
+        self.damage_animation_timer / DAMAGE_ANIMATION_LENGTH
     }
 
     pub fn init_window_dimensions(&mut self, dimensions: (i32, i32)) {

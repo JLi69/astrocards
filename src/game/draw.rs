@@ -59,6 +59,23 @@ fn draw_background(gamestate: &Game, shader: &ShaderProgram) {
     draw_elements(quad);
 }
 
+//When the player takes damage, make the screen flash red
+fn draw_damage(gamestate: &Game, shader: &ShaderProgram) {
+    if gamestate.damage_animation_perc() <= 0.0 {
+        return;
+    }
+
+    let alpha = gamestate.damage_animation_perc().clamp(0.0, 1.0) * 0.6;
+    shader.uniform_vec4f("tint", 1.0, 0.0, 0.0, alpha);
+    let transform = Matrix4::from_nonuniform_scale(CANVAS_W, CANVAS_H, 1.0);
+    gamestate.textures.bind("white");
+    shader.uniform_matrix4f("transform", &transform);
+    let quad = gamestate.models.bind("quad2d");
+    draw_elements(quad);
+    //Reset to white
+    shader.uniform_vec4f("tint", 1.0, 1.0, 1.0, 1.0);
+}
+
 //Display background planet
 fn draw_planet(gamestate: &Game, shader: &ShaderProgram) {
     let transform = Matrix4::from_translation(Vector3::new(0.0, -CANVAS_H / 2.0, 0.0))
@@ -74,6 +91,11 @@ fn draw_asteroids(gamestate: &Game, shader: &ShaderProgram) {
     gamestate.textures.bind("asteroid");
     let quad = gamestate.models.bind("quad2d");
     for asteroid in &gamestate.asteroids {
+        if asteroid.is_red {
+            shader.uniform_vec4f("tint", 1.0, 0.2, 0.2, 1.0);
+        } else {
+            shader.uniform_vec4f("tint", 1.0, 1.0, 1.0, 1.0);
+        }
         let w = asteroid.sprite.width;
         let h = asteroid.sprite.height;
         let translate = Vector3::new(asteroid.sprite.x, asteroid.sprite.y, 0.0);
@@ -83,6 +105,7 @@ fn draw_asteroids(gamestate: &Game, shader: &ShaderProgram) {
         shader.uniform_matrix4f("transform", &transform);
         draw_elements(quad.clone());
     }
+    shader.uniform_vec4f("tint", 1.0, 1.0, 1.0, 1.0);
 }
 
 fn draw_asteroids_flame(gamestate: &Game, shader: &ShaderProgram) {
@@ -137,6 +160,7 @@ impl Game {
     pub fn draw(&self) {
         let screen_mat = calculate_screen_mat(self.window_w, self.window_h);
         let shader = self.shaders.use_program("quadshader");
+        shader.uniform_vec4f("tint", 1.0, 1.0, 1.0, 1.0);
         shader.uniform_matrix4f("screen", &screen_mat);
 
         //For debug purposes
@@ -162,8 +186,11 @@ impl Game {
         explosionshader.uniform_matrix4f("screen", &screen_mat);
         draw_explosions(self, &explosionshader);
 
-        //Display heart icon (for gui)
+        //Display damage screen
         shader.use_program();
+        draw_damage(self, &shader);
+
+        //Display heart icon (for gui)
         display_icon(self, &shader, "hearticon", 24.0, 26.0, 24.0, 24.0);
 
         //Unbind textures

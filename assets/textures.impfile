@@ -21,3 +21,7 @@
 "planet" {
 	"path" = "assets/textures/planet.png";
 }
+
+"white" {
+	"path" = "assets/textures/white.png";
+}
