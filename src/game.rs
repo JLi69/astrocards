@@ -204,16 +204,6 @@ impl Game {
         //lose helath if we enter something wrong and there is a red asteroid
         //on the screen and destroy all red asteroids on the screen
         if found_red && index.is_none() {
-            //Destroy all red asteroids
-            for asteroid in &mut self.asteroids {
-                if asteroid.above_top() || !asteroid.is_red {
-                    continue;
-                }
-
-                asteroid.deleted = true;
-                asteroid.destroyed = true;
-            }
-
             if self.health > 0 {
                 self.health -= 1;
             }
