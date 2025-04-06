@@ -18,11 +18,11 @@ URL: https://opengameart.org/content/space-backgrounds
 License: CC0
 Notes: cropped `Hintergrund_Glitzern_Supernova.xcf` for `background.png`
 
-Title: "Asteroids" (asteroid.png)
+Title: "Asteroids" (asteroid.png & icon.png)
 Author: phaelax
 URL: https://opengameart.org/content/asteroids
 License: CC-BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/)
-Notes: darkened asteroid texture.
+Notes: darkened asteroid texture and used scaled down version for `icon.png`.
 
 Title: Smoke particle assets (explosionparticle.png)
 Author: Kenney (https://www.kenney.nl)

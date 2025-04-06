@@ -9,6 +9,22 @@ use game::Game;
 use glfw::{Context, WindowMode};
 use gui::GuiController;
 
+//Load `assets/icon.png` as the window icon
+fn load_icon(window: &mut glfw::Window) {
+    match assets::texture::load_image_pixels("assets/icon.png") {
+        Ok((pixel_data, info)) => {
+            window.set_icon_from_pixels(vec![
+                glfw::PixelImage {
+                    pixels: pixel_data,
+                    width: info.width,
+                    height: info.height,
+                }
+            ]);
+        }
+        Err(msg) => eprintln!("{msg}"),
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut glfw = glfw::init(glfw::fail_on_errors).expect("Failed to init glfw!");
@@ -22,6 +38,7 @@ fn main() {
     window.set_cursor_pos_polling(true);
     window.set_key_polling(true);
     window.set_mouse_button_polling(true);
+    load_icon(&mut window);
     glfw.set_swap_interval(glfw::SwapInterval::Sync(1));
     //Load OpenGL
     gl::load_with(|s| glfw.get_proc_address_raw(s));
