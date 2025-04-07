@@ -3,7 +3,9 @@ pub mod draw;
 pub mod sprite;
 pub mod update;
 
-use crate::{flashcards::Flashcard, gui::GuiController, impfile};
+use std::collections::VecDeque;
+
+use crate::{flashcards::Flashcard, gui::GuiController, impfile, log::LogItem};
 use assets::models::ModelManager;
 use assets::shaders::ShaderManager;
 use assets::textures::TextureManager;
@@ -66,6 +68,7 @@ pub struct Game {
     asteroids_until_next_level: u32,
     pub levelup_animation_timer: f32,
     pub damage_animation_timer: f32,
+    pub log: VecDeque<LogItem>,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -101,6 +104,7 @@ impl Game {
             asteroids_until_next_level: calculate_asteroids_until_next(1),
             levelup_animation_timer: 0.0,
             damage_animation_timer: 0.0,
+            log: VecDeque::new(),
         }
     }
 
@@ -119,6 +123,7 @@ impl Game {
          * asteroids_until_next_level: calculate_asteroids_until_next(1)
          * levelup_animation_timer: 0.0
          * damage_animation_timer: 0.0
+         * log: VecDeque::new(),
          * */
 
         self.asteroid_spawn_timer = 0.0;
@@ -132,6 +137,7 @@ impl Game {
         self.asteroids_until_next_level = calculate_asteroids_until_next(self.level);
         self.levelup_animation_timer = 0.0;
         self.damage_animation_timer = 0.0;
+        self.log.clear();
     }
 
     pub fn load_config(&mut self, path: &str) {

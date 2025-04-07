@@ -135,6 +135,28 @@ fn display_levelup(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
     );
 }
 
+fn display_log(gamestate: &Game, ui: &Ui, w: i32, h: i32, pixels_per_point: f32) {
+    if gamestate.log.is_empty() {
+        return;
+    }
+
+    let painter = ui.painter();
+    let font_id = FontId::new(16.0, egui::FontFamily::Monospace);
+    for (i, log_item) in gamestate.log.iter().enumerate() {
+        //Calculate gui x position
+        let gui_position = gui_pos(32.0, 0.0, w, h);
+        //Calculate the y position (subtract size of window at bottom of screen)
+        let y = h as f32 / pixels_per_point - 56.0 - i as f32 * 24.0;
+        painter.text(
+            Pos2::new(gui_position.x, y),
+            Align2::LEFT_BOTTOM,
+            log_item.message(),
+            font_id.clone(),
+            Color32::from_rgb(255, 64, 64),
+        );
+    }
+}
+
 impl GuiController {
     pub fn init(window: &Window) -> Self {
         Self {
@@ -176,6 +198,7 @@ impl GuiController {
                 display_asteroid_text(gamestate, ui, w, h);
                 display_hud(gamestate, ui, w, h);
                 display_levelup(gamestate, ui, w, h);
+                display_log(gamestate, ui, w, h, pixels_per_point);
             });
 
         //Answer input box

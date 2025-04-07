@@ -4,6 +4,7 @@ mod game;
 mod gfx;
 mod gui;
 mod impfile;
+mod log;
 
 use game::Game;
 use glfw::{Context, WindowMode};

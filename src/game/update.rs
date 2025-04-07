@@ -3,10 +3,11 @@ use super::{
     draw::{CANVAS_H, CANVAS_W},
     sprite::{Asteroid, Explosion},
 };
-use crate::flashcards::Flashcard;
+use crate::{flashcards::Flashcard, log::LogItem};
 
 const ASTEROID_SIZE: f32 = 80.0;
 pub const EXPLOSION_LIFETIME: f32 = 1.0; //1 second
+pub const MAX_LOG_LEN: usize = 16;
 
 fn calculate_asteroid_speed(level: u32) -> f32 {
     CANVAS_H / (25.0 - (level - 1) as f32).max(5.0)
@@ -84,6 +85,62 @@ impl Game {
         self.health == 0
     }
 
+    //Update log
+    pub fn update_log(&mut self, dt: f32) {
+        if self.log.is_empty() {
+            return;
+        }
+
+        let can_pop = if let Some(log_item) = self.log.get_mut(0) {
+            log_item.update(dt);
+            log_item.can_delete() || self.log.len() > MAX_LOG_LEN
+        } else {
+            self.log.len() > MAX_LOG_LEN
+        };
+
+        if can_pop {
+            self.log.pop_front();
+            while self.log.len() > MAX_LOG_LEN {
+                self.log.pop_front();
+            }
+            if let Some(log_item) = self.log.get_mut(0) {
+                log_item.reset_timer();
+            }
+        }
+    }
+
+    pub fn delete_asteroids(&mut self) {
+        //Delete asteroids
+        let mut keep = vec![];
+        for asteroid in &self.asteroids {
+            if !asteroid.deleted {
+                keep.push(asteroid.clone());
+                continue;
+            }
+
+            //If the asteroid hits the bottom of the screen, lose health
+            if asteroid.at_bottom() && self.health > 0 {
+                self.log.push_back(LogItem::new(asteroid.flashcard.clone()));
+                self.health -= 1;
+                //If it's red, then lose instantly
+                if asteroid.is_red {
+                    self.health = 0;
+                }
+
+                if self.health > 0 {
+                    self.damage_animation_timer = DAMAGE_ANIMATION_LENGTH;
+                }
+            }
+
+            //Add explosion
+            if asteroid.at_bottom() || asteroid.destroyed {
+                let (x, y) = (asteroid.sprite.x, asteroid.sprite.y);
+                self.explosions.push(Explosion::new(x, y));
+            }
+        }
+        self.asteroids = keep;
+    }
+
     pub fn update(&mut self, dt: f32) {
         self.time += dt;
         if self.levelup_animation_timer > 0.0 {
@@ -107,33 +164,7 @@ impl Game {
             .collect();
 
         //Delete asteroids
-        let mut keep = vec![];
-        for asteroid in &self.asteroids {
-            if !asteroid.deleted {
-                keep.push(asteroid.clone());
-                continue;
-            }
-
-            //If the asteroid hits the bottom of the screen, lose health
-            if asteroid.at_bottom() && self.health > 0 {
-                self.health -= 1;
-                //If it's red, then lose instantly
-                if asteroid.is_red {
-                    self.health = 0;
-                }
-
-                if self.health > 0 {
-                    self.damage_animation_timer = DAMAGE_ANIMATION_LENGTH;
-                }
-            }
-
-            //Add explosion
-            if asteroid.at_bottom() || asteroid.destroyed {
-                let (x, y) = (asteroid.sprite.x, asteroid.sprite.y);
-                self.explosions.push(Explosion::new(x, y));
-            }
-        }
-        self.asteroids = keep;
+        self.delete_asteroids();
 
         //Stop updating if game over
         if self.game_over() {
@@ -149,5 +180,6 @@ impl Game {
         }
 
         self.advance_to_next_level();
+        self.update_log(dt);
     }
 }
