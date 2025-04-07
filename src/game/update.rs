@@ -24,6 +24,19 @@ pub fn is_red(rand_value: u32, level: u32) -> bool {
     }
 }
 
+fn intersects_another_asteroid(asteroid: &Asteroid, other: &[Asteroid]) -> bool {
+    for asteroid2 in other {
+        let dx = asteroid2.sprite.x - asteroid.sprite.x;
+        let dy = asteroid2.sprite.y - asteroid.sprite.y;
+        let dist = (dx * dx + dy * dy).sqrt();
+        if dist < (asteroid.sprite.width + asteroid2.sprite.width) * 0.5 {
+            return true;
+        }
+    }
+
+    false
+}
+
 impl Game {
     pub fn get_random_card(&self) -> Flashcard {
         if self.flashcards.is_empty() {
@@ -57,7 +70,9 @@ impl Game {
             let flashcard = self.get_random_card();
             let red = is_red(rand::random(), self.level);
             let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard, red);
-            self.asteroids.push(new_asteroid);
+            if !intersects_another_asteroid(&new_asteroid, &self.asteroids) {
+                self.asteroids.push(new_asteroid);
+            }
         }
 
         //In later levels spawn a third asteroid
@@ -68,7 +83,9 @@ impl Game {
             let flashcard = self.get_random_card();
             let red = is_red(rand::random(), self.level);
             let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard, red);
-            self.asteroids.push(new_asteroid);
+            if !intersects_another_asteroid(&new_asteroid, &self.asteroids) {
+                self.asteroids.push(new_asteroid);
+            }
         }
 
         let x = rand::random::<f32>() * range + ASTEROID_SIZE - CANVAS_W / 2.0;
@@ -77,7 +94,9 @@ impl Game {
         let flashcard = self.get_random_card();
         let red = is_red(rand::random(), self.level);
         let new_asteroid = Asteroid::new(x, y, ASTEROID_SIZE, rotation, flashcard, red);
-        self.asteroids.push(new_asteroid);
+        if !intersects_another_asteroid(&new_asteroid, &self.asteroids) {
+            self.asteroids.push(new_asteroid);
+        }
     }
 
     //Returns if its game over

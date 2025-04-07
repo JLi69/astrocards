@@ -8,13 +8,13 @@ pub const MESSAGE_DURATION: f32 = 10.0; //In seconds
 
 pub struct LogItem {
     timer: f32,
-    pub flashcard: Flashcard
+    pub flashcard: Flashcard,
 }
 
 impl LogItem {
     pub fn new(card: Flashcard) -> Self {
-        Self { 
-            timer: MESSAGE_DURATION, 
+        Self {
+            timer: MESSAGE_DURATION,
             flashcard: card,
         }
     }
@@ -33,9 +33,8 @@ impl LogItem {
 
     pub fn message(&self) -> String {
         format!(
-            "Missed asteroid: \"{}\" = \"{}\"", 
-            self.flashcard.question,
-            self.flashcard.answer,
+            "Missed asteroid: \"{}\" = \"{}\"",
+            self.flashcard.question, self.flashcard.answer,
         )
     }
 }
