@@ -3,14 +3,14 @@ pub mod draw;
 pub mod sprite;
 pub mod update;
 
-use std::{collections::VecDeque, fs::File, io::Read};
 use crate::{flashcards::Flashcard, gui::GuiController, impfile, log::LogItem};
 use assets::models::ModelManager;
 use assets::shaders::ShaderManager;
 use assets::textures::TextureManager;
-use egui_gl_glfw::egui::{FontDefinitions, Event, MouseWheelUnit, emath};
+use egui_gl_glfw::egui::{Event, FontDefinitions, MouseWheelUnit, emath};
 use glfw::{GlfwReceiver, WindowEvent};
 use sprite::{Asteroid, Explosion};
+use std::{collections::VecDeque, fs::File, io::Read};
 
 const DEFAULT_SPAWN_INTERVAL: f32 = 8.0;
 const DEFAULT_HEALTH: u32 = 5;
@@ -310,7 +310,7 @@ impl Game {
             if let Err(msg) = res {
                 eprintln!("{msg}");
             }
-            self.about_text.extend(buf.lines().map(|s| s.to_string())); 
+            self.about_text.extend(buf.lines().map(|s| s.to_string()));
         }
 
         //Load credits
@@ -320,7 +320,7 @@ impl Game {
             if let Err(msg) = res {
                 eprintln!("{msg}");
             }
-            self.about_text.extend(buf.lines().map(|s| s.to_string())); 
-        } 
+            self.about_text.extend(buf.lines().map(|s| s.to_string()));
+        }
     }
 }

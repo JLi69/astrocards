@@ -408,11 +408,13 @@ impl GuiController {
                     let main_menu = new_button(ui, "Main Menu", 16.0, GuiAction::GotoMainMenu);
                     action = update_action(action, main_menu);
                     ui.add_space(24.0);
-                    egui::ScrollArea::vertical().max_width(width).show(ui, |ui| { 
-                        //Display text
-                        display_lines(ui, &gamestate.about_text); 
-                    });
-                }); 
+                    egui::ScrollArea::vertical()
+                        .max_width(width)
+                        .show(ui, |ui| {
+                            //Display text
+                            display_lines(ui, &gamestate.about_text);
+                        });
+                });
             });
 
         //End frame
