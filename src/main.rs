@@ -59,6 +59,18 @@ fn run_about_screen(gamestate: &mut Game, gui_controller: &mut GuiController, dt
     }
 }
 
+fn run_load_flashcards(gamestate: &mut Game, gui_controller: &mut GuiController, dt: f32) {
+    //Display background
+    gamestate.draw_background_only();
+    gamestate.update_time(dt);
+    //Display gui
+    gui::set_ui_gl_state();
+    let gui_action = gui_controller.display_load_screen(gamestate);
+    if let Some(action) = gui_action {
+        gui::handle_gui_action(gamestate, action);
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut glfw = glfw::init(glfw::fail_on_errors).expect("Failed to init glfw!");
@@ -113,7 +125,9 @@ fn main() {
             GameScreen::Game => run_game(&mut gamestate, &mut gui_controller, dt),
             GameScreen::MainMenu => run_main_menu(&mut gamestate, &mut gui_controller, dt),
             GameScreen::About => run_about_screen(&mut gamestate, &mut gui_controller, dt),
-            GameScreen::LoadFlashcards => {}
+            GameScreen::LoadFlashcards => {
+                run_load_flashcards(&mut gamestate, &mut gui_controller, dt)
+            }
         }
 
         //Print OpenGL errors

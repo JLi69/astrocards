@@ -1,5 +1,7 @@
 use crate::impfile;
 
+pub const SET_PATH: &str = "sets";
+
 #[derive(Clone)]
 pub struct Flashcard {
     pub question: String,
@@ -38,4 +40,8 @@ pub fn load_flashcards(paths: &[String]) -> Vec<Flashcard> {
         .iter()
         .flat_map(|path| load_flashcards_from_file(path))
         .collect()
+}
+
+pub fn get_set_path(filename: &str) -> String {
+    format!("{SET_PATH}/{filename}")
 }

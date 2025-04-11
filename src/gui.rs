@@ -1,3 +1,4 @@
+use crate::flashcards;
 use crate::game::draw::{CANVAS_H, CANVAS_W, caclulate_canv_offset, calculate_screen_scale};
 use crate::game::{Game, GameScreen};
 use cgmath::Vector4;
@@ -13,6 +14,8 @@ pub enum GuiAction {
     Restart,
     GotoMainMenu,
     GotoAbout,
+    GotoLoadFlashcards,
+    Load,
     Quit,
 }
 
@@ -342,8 +345,9 @@ impl GuiController {
                     let title_text = RichText::new("Astrocards").size(64.0).color(Color32::WHITE);
                     ui.label(title_text);
                     ui.add_space(height / 48.0);
-                    //TODO: load set screen
-                    let load_set = new_button(ui, " Load Set ", 24.0, GuiAction::GotoMainMenu);
+                    //Load flashcard set screen
+                    let load_set =
+                        new_button(ui, " Load Set ", 24.0, GuiAction::GotoLoadFlashcards);
                     action = update_action(action, load_set);
                     ui.add_space(height / 48.0);
                     //Go to about screen
@@ -438,6 +442,78 @@ impl GuiController {
 
         action
     }
+
+    //Display gui for load set menu
+    pub fn display_load_screen(&mut self, gamestate: &mut Game) -> Option<GuiAction> {
+        let mut action = None;
+        let (w, h) = gamestate.get_window_size();
+
+        let pixels_per_point = self.input_state.pixels_per_point;
+        if self.ctx.pixels_per_point() != pixels_per_point {
+            self.ctx.set_pixels_per_point(pixels_per_point);
+        }
+        self.ctx.begin_pass(self.input_state.input.take());
+
+        //Display asteroid textures
+        let margin = 160.0;
+        let width = w as f32 / pixels_per_point - margin * 2.0;
+        let height = h as f32 / pixels_per_point - 32.0;
+        egui::Window::new("load_sets")
+            .frame(egui::Frame::none())
+            .movable(false)
+            .title_bar(false)
+            .scroll(true)
+            .fixed_size(vec2(width, height))
+            .fixed_pos(Pos2::new(margin, 16.0))
+            .show(&self.ctx, |ui| {
+                ui.vertical_centered(|ui| {
+                    let title_text = RichText::new("Load Sets").size(32.0).color(Color32::WHITE);
+                    ui.label(title_text);
+                    ui.add_space(8.0);
+                    egui::ScrollArea::vertical()
+                        .max_width(width)
+                        .max_height(height - 256.0)
+                        .show(ui, |ui| {
+                            for set in &gamestate.set_paths {
+                                let text = RichText::new(set).size(16.0).color(Color32::WHITE);
+                                ui.selectable_value(
+                                    &mut gamestate.selected_set_path,
+                                    set.clone(),
+                                    text,
+                                );
+                            }
+                        });
+                    ui.add_space(8.0);
+                    //Load set
+                    let load = new_button(ui, "Load", 16.0, GuiAction::Load);
+                    action = update_action(action, load);
+                    //Return to main menu
+                    let main_menu = new_button(ui, "Main Menu", 16.0, GuiAction::GotoMainMenu);
+                    action = update_action(action, main_menu);
+                });
+            });
+
+        //End frame
+        let egui::FullOutput {
+            platform_output,
+            textures_delta,
+            shapes,
+            pixels_per_point: _,
+            viewport_output: _,
+        } = self.ctx.end_pass();
+
+        //Handle copy pasting
+        if !platform_output.copied_text.is_empty() {
+            egui_backend::copy_to_clipboard(&mut self.input_state, platform_output.copied_text);
+        }
+
+        //Display
+        let clipped_shapes = self.ctx.tessellate(shapes, pixels_per_point);
+        self.painter
+            .paint_and_update_textures(pixels_per_point, &clipped_shapes, &textures_delta);
+
+        action
+    }
 }
 
 pub fn handle_gui_action(gamestate: &mut Game, action: GuiAction) {
@@ -445,6 +521,23 @@ pub fn handle_gui_action(gamestate: &mut Game, action: GuiAction) {
         GuiAction::Restart => gamestate.restart(),
         GuiAction::GotoMainMenu => gamestate.current_screen = GameScreen::MainMenu,
         GuiAction::GotoAbout => gamestate.current_screen = GameScreen::About,
+        GuiAction::GotoLoadFlashcards => {
+            gamestate.current_screen = GameScreen::LoadFlashcards;
+            gamestate.get_set_list();
+            gamestate.selected_set_path.clear();
+        }
+        GuiAction::Load => {
+            if gamestate.selected_set_path.is_empty() {
+                return;
+            }
+            gamestate.restart();
+            let path = vec![flashcards::get_set_path(&gamestate.selected_set_path)];
+            gamestate.flashcards = flashcards::load_flashcards(&path);
+            if gamestate.flashcards.is_empty() {
+                return;
+            }
+            gamestate.current_screen = GameScreen::Game;
+        }
         GuiAction::Quit => std::process::exit(0),
     }
 }

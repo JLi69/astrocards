@@ -3,7 +3,12 @@ pub mod draw;
 pub mod sprite;
 pub mod update;
 
-use crate::{flashcards::Flashcard, gui::GuiController, impfile, log::LogItem};
+use crate::{
+    flashcards::{Flashcard, SET_PATH},
+    gui::GuiController,
+    impfile,
+    log::LogItem,
+};
 use assets::models::ModelManager;
 use assets::shaders::ShaderManager;
 use assets::textures::TextureManager;
@@ -78,6 +83,8 @@ pub struct Game {
     pub log: VecDeque<LogItem>,
     pub current_screen: GameScreen,
     pub about_text: Vec<String>,
+    pub set_paths: Vec<String>,
+    pub selected_set_path: String,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -116,6 +123,8 @@ impl Game {
             log: VecDeque::new(),
             current_screen: GameScreen::Game,
             about_text: vec![],
+            set_paths: vec![],
+            selected_set_path: String::new(),
         }
     }
 
@@ -321,6 +330,22 @@ impl Game {
                 eprintln!("{msg}");
             }
             self.about_text.extend(buf.lines().map(|s| s.to_string()));
+        }
+    }
+
+    pub fn get_set_list(&mut self) {
+        self.set_paths.clear();
+        if let Ok(sets) = std::fs::read_dir(SET_PATH) {
+            for entry in sets.flatten() {
+                let name = entry.file_name().into_string().unwrap_or(String::new());
+                if name.is_empty() {
+                    continue;
+                }
+
+                if entry.path().is_file() {
+                    self.set_paths.push(name);
+                }
+            }
         }
     }
 }
