@@ -347,5 +347,6 @@ impl Game {
                 }
             }
         }
+        self.set_paths.sort();
     }
 }
