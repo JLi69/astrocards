@@ -6,7 +6,7 @@ mod gui;
 mod impfile;
 mod log;
 
-use game::Game;
+use game::{Game, GameScreen};
 use glfw::{Context, WindowMode};
 use gui::GuiController;
 
@@ -24,6 +24,41 @@ fn load_icon(window: &mut glfw::Window) {
     }
 }
 
+fn run_game(gamestate: &mut Game, gui_controller: &mut GuiController, dt: f32) {
+    gamestate.draw();
+    gamestate.update(dt);
+    //Display gui
+    gui::set_ui_gl_state();
+    let gui_action = gui_controller.display_game_gui(gamestate);
+    if let Some(action) = gui_action {
+        gui::handle_gui_action(gamestate, action);
+    }
+}
+
+fn run_main_menu(gamestate: &mut Game, gui_controller: &mut GuiController, dt: f32) {
+    //Display background
+    gamestate.draw_background_only();
+    gamestate.update_time(dt);
+    //Display gui
+    gui::set_ui_gl_state();
+    let gui_action = gui_controller.display_main_menu_gui(gamestate);
+    if let Some(action) = gui_action {
+        gui::handle_gui_action(gamestate, action);
+    }
+}
+
+fn run_about_screen(gamestate: &mut Game, gui_controller: &mut GuiController, dt: f32) {
+    //Display background
+    gamestate.draw_background_only();
+    gamestate.update_time(dt);
+    //Display gui
+    gui::set_ui_gl_state();
+    let gui_action = gui_controller.display_about_screen(gamestate);
+    if let Some(action) = gui_action {
+        gui::handle_gui_action(gamestate, action);
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut glfw = glfw::init(glfw::fail_on_errors).expect("Failed to init glfw!");
@@ -37,6 +72,7 @@ fn main() {
     window.set_cursor_pos_polling(true);
     window.set_key_polling(true);
     window.set_mouse_button_polling(true);
+    window.set_scroll_polling(true);
     load_icon(&mut window);
     glfw.set_swap_interval(glfw::SwapInterval::Sync(1));
     //Load OpenGL
@@ -46,11 +82,16 @@ fn main() {
     let mut gamestate = Game::new();
     //Load config
     gamestate.load_config("cfg.impfile");
+    //Load about text
+    gamestate.load_about();
     //Load assets
     gamestate.load_assets();
     gamestate.init_window_dimensions(window.get_size());
     //Load flashcards
     gamestate.flashcards = flashcards::load_flashcards(&args[1..]);
+    if gamestate.flashcards.is_empty() {
+        gamestate.current_screen = GameScreen::MainMenu;
+    }
     //gui controller
     let mut gui_controller = GuiController::init(&window);
     gui_controller.init_font(&gamestate);
@@ -68,14 +109,11 @@ fn main() {
         let pixels_per_point = window.get_content_scale().0;
         gui_controller.update_state(w, h, gamestate.time(), pixels_per_point);
 
-        //Display gui
-        gamestate.draw();
-        gamestate.update(dt);
-        gui::set_ui_gl_state();
-        let gui_action = gui_controller.display_game_gui(&mut gamestate, w, h);
-
-        if let Some(action) = gui_action {
-            gui::handle_gui_action(&mut gamestate, action);
+        match gamestate.current_screen {
+            GameScreen::Game => run_game(&mut gamestate, &mut gui_controller, dt),
+            GameScreen::MainMenu => run_main_menu(&mut gamestate, &mut gui_controller, dt),
+            GameScreen::About => run_about_screen(&mut gamestate, &mut gui_controller, dt),
+            GameScreen::LoadFlashcards => {}
         }
 
         //Print OpenGL errors

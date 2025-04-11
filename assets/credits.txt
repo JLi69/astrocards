@@ -1,5 +1,5 @@
-Astrocards
-
+Astrocards Credits
+------------------
 Programming by Nullptr Error ("JLi69")
 License: GPLv3
 
@@ -11,7 +11,6 @@ Google Fonts: https://fonts.google.com/specimen/Armata
 
 Artwork used:
 -------------
-
 Title: "Space Backgrounds" (background.png)
 Author: scorcher24
 URL: https://opengameart.org/content/space-backgrounds

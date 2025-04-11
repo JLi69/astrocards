@@ -1,5 +1,5 @@
-use crate::game::Game;
 use crate::game::draw::{CANVAS_H, CANVAS_W, caclulate_canv_offset, calculate_screen_scale};
+use crate::game::{Game, GameScreen};
 use cgmath::Vector4;
 use egui_backend::egui::{self, RichText};
 use egui_backend::egui::{Align2, Color32, FontId, Pos2, RawInput, Rect, Ui, vec2};
@@ -11,6 +11,9 @@ use glfw::{Window, WindowEvent};
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum GuiAction {
     Restart,
+    GotoMainMenu,
+    GotoAbout,
+    Quit,
 }
 
 //Initialized the egui input state
@@ -40,7 +43,7 @@ pub fn set_ui_gl_state() {
 pub struct GuiController {
     painter: Painter,
     ctx: egui::Context,
-    input_state: EguiInputState,
+    pub input_state: EguiInputState,
 }
 
 pub fn world_to_eguipos(x: f32, y: f32, w: i32, h: i32) -> Pos2 {
@@ -55,7 +58,8 @@ pub fn world_to_eguipos(x: f32, y: f32, w: i32, h: i32) -> Pos2 {
     Pos2::new(tx, ty)
 }
 
-fn display_asteroid_text(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
+fn display_asteroid_text(gamestate: &Game, ui: &Ui) {
+    let (w, h) = gamestate.get_window_size();
     let painter = ui.painter();
     let font_id = FontId::new(16.0, egui::FontFamily::Monospace);
     for asteroid in &gamestate.asteroids {
@@ -77,7 +81,8 @@ pub fn gui_pos(x: f32, y: f32, w: i32, h: i32) -> Pos2 {
     world_to_eguipos(x, y, w, h) + corner
 }
 
-fn display_hud(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
+fn display_hud(gamestate: &Game, ui: &Ui) {
+    let (w, h) = gamestate.get_window_size();
     let painter = ui.painter();
     let font_id = FontId::new(16.0, egui::FontFamily::Monospace);
 
@@ -111,11 +116,12 @@ fn smoothstep_up(x: f32) -> f32 {
     1.0 - (1.0 - x).powi(2)
 }
 
-fn display_levelup(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
+fn display_levelup(gamestate: &Game, ui: &Ui) {
     if gamestate.levelup_animation_perc() <= 0.0 {
         return;
     }
 
+    let (w, h) = gamestate.get_window_size();
     let painter = ui.painter();
     let font_id = FontId::new(64.0, egui::FontFamily::Monospace);
     let perc = gamestate.levelup_animation_perc();
@@ -135,11 +141,12 @@ fn display_levelup(gamestate: &Game, ui: &Ui, w: i32, h: i32) {
     );
 }
 
-fn display_log(gamestate: &Game, ui: &Ui, w: i32, h: i32, pixels_per_point: f32) {
+fn display_log(gamestate: &Game, ui: &Ui, pixels_per_point: f32) {
     if gamestate.log.is_empty() {
         return;
     }
 
+    let (w, h) = gamestate.get_window_size();
     let painter = ui.painter();
     let font_id = FontId::new(16.0, egui::FontFamily::Monospace);
     for (i, log_item) in gamestate.log.iter().enumerate() {
@@ -154,6 +161,32 @@ fn display_log(gamestate: &Game, ui: &Ui, w: i32, h: i32, pixels_per_point: f32)
             font_id.clone(),
             Color32::from_rgb(255, 64, 64),
         );
+    }
+}
+
+fn new_button(ui: &mut Ui, text: &str, sz: f32, action: GuiAction) -> Option<GuiAction> {
+    let button_text = RichText::new(text).size(sz).color(Color32::WHITE);
+    let button = ui.button(button_text);
+    if button.clicked() {
+        //Restart session
+        Some(action)
+    } else {
+        None
+    }
+}
+
+fn update_action(action: Option<GuiAction>, new_action: Option<GuiAction>) -> Option<GuiAction> {
+    if new_action.is_some() {
+        new_action
+    } else {
+        action
+    }
+}
+
+fn display_lines(ui: &mut Ui, lines: &[String]) {
+    for line in lines {
+        let text = RichText::new(line).size(16.0).color(Color32::WHITE);
+        ui.label(text);
     }
 }
 
@@ -182,7 +215,8 @@ impl GuiController {
     }
 
     //Display and update game gui
-    pub fn display_game_gui(&mut self, gamestate: &mut Game, w: i32, h: i32) -> Option<GuiAction> {
+    pub fn display_game_gui(&mut self, gamestate: &mut Game) -> Option<GuiAction> {
+        let (w, h) = gamestate.get_window_size();
         let mut action = None;
 
         let pixels_per_point = self.input_state.pixels_per_point;
@@ -195,10 +229,10 @@ impl GuiController {
         egui::CentralPanel::default()
             .frame(egui::Frame::none())
             .show(&self.ctx, |ui| {
-                display_asteroid_text(gamestate, ui, w, h);
-                display_hud(gamestate, ui, w, h);
-                display_levelup(gamestate, ui, w, h);
-                display_log(gamestate, ui, w, h, pixels_per_point);
+                display_asteroid_text(gamestate, ui);
+                display_hud(gamestate, ui);
+                display_levelup(gamestate, ui);
+                display_log(gamestate, ui, pixels_per_point);
             });
 
         //Answer input box
@@ -213,6 +247,19 @@ impl GuiController {
                     ui.label("Type your answer here (press enter to submit):");
                     ui.text_edit_singleline(&mut gamestate.answer);
                 })
+            });
+
+        //Display go to main menu button
+        egui::Window::new("return_to_main_menu")
+            .frame(egui::Frame::none())
+            .movable(false)
+            .title_bar(false)
+            .scroll(true)
+            .fixed_size(vec2(200.0, 80.0))
+            .fixed_pos(Pos2::new(w as f32 / pixels_per_point - 112.0, 10.0))
+            .show(&self.ctx, |ui| {
+                let main_menu = new_button(ui, "Main Menu", 16.0, GuiAction::GotoMainMenu);
+                action = update_action(action, main_menu);
             });
 
         //Display game over screen
@@ -235,26 +282,138 @@ impl GuiController {
                         let final_level = format!("Final Level: {}", gamestate.level);
                         ui.label(RichText::new(final_level).size(16.0).color(Color32::WHITE));
                         ui.add_space(height / 32.0);
-                        let button_text = RichText::new("  Restart  ")
-                            .size(20.0)
-                            .color(Color32::WHITE);
-                        let button = ui.button(button_text);
-                        if button.clicked() {
-                            //Restart session
-                            action = Some(GuiAction::Restart);
-                        }
-                        let button_text = RichText::new(" Main Menu ")
-                            .size(20.0)
-                            .color(Color32::WHITE);
-                        let button = ui.button(button_text);
-                        if button.clicked() {
-                            //Go to main menu
-                            //TODO implement main menu
-                            eprintln!("Main menu.");
-                        }
+                        //Restart button
+                        let restart = new_button(ui, "  Restart  ", 20.0, GuiAction::Restart);
+                        action = update_action(action, restart);
+                        //Go to main menu
+                        let main_menu =
+                            new_button(ui, " Main Menu ", 20.0, GuiAction::GotoMainMenu);
+                        action = update_action(action, main_menu);
                     })
                 });
         }
+
+        //End frame
+        let egui::FullOutput {
+            platform_output,
+            textures_delta,
+            shapes,
+            pixels_per_point: _,
+            viewport_output: _,
+        } = self.ctx.end_pass();
+
+        //Handle copy pasting
+        if !platform_output.copied_text.is_empty() {
+            egui_backend::copy_to_clipboard(&mut self.input_state, platform_output.copied_text);
+        }
+
+        //Display
+        let clipped_shapes = self.ctx.tessellate(shapes, pixels_per_point);
+        self.painter
+            .paint_and_update_textures(pixels_per_point, &clipped_shapes, &textures_delta);
+
+        action
+    }
+
+    //Display gui for main menu
+    pub fn display_main_menu_gui(&mut self, gamestate: &mut Game) -> Option<GuiAction> {
+        let mut action = None;
+        let (w, h) = gamestate.get_window_size();
+
+        let pixels_per_point = self.input_state.pixels_per_point;
+        if self.ctx.pixels_per_point() != pixels_per_point {
+            self.ctx.set_pixels_per_point(pixels_per_point);
+        }
+        self.ctx.begin_pass(self.input_state.input.take());
+
+        //Display asteroid textures
+        let width = w as f32 / pixels_per_point;
+        let height = h as f32 / pixels_per_point;
+        egui::Window::new("main_menu")
+            .frame(egui::Frame::none())
+            .movable(false)
+            .title_bar(false)
+            .scroll(true)
+            .fixed_size(vec2(width, height))
+            .fixed_pos(Pos2::new(0.0, 0.0))
+            .show(&self.ctx, |ui| {
+                ui.vertical_centered(|ui| {
+                    ui.add_space(height / 8.0);
+                    let title_text = RichText::new("Astrocards").size(64.0).color(Color32::WHITE);
+                    ui.label(title_text);
+                    ui.add_space(height / 48.0);
+                    //TODO: load set screen
+                    let load_set = new_button(ui, " Load Set ", 24.0, GuiAction::GotoMainMenu);
+                    action = update_action(action, load_set);
+                    ui.add_space(height / 48.0);
+                    //Go to about screen
+                    let about = new_button(ui, "   About   ", 24.0, GuiAction::GotoAbout);
+                    action = update_action(action, about);
+                    ui.add_space(height / 48.0);
+                    //Quit button
+                    let quit = new_button(ui, "     Quit     ", 24.0, GuiAction::Quit);
+                    action = update_action(action, quit);
+                });
+            });
+
+        //End frame
+        let egui::FullOutput {
+            platform_output,
+            textures_delta,
+            shapes,
+            pixels_per_point: _,
+            viewport_output: _,
+        } = self.ctx.end_pass();
+
+        //Handle copy pasting
+        if !platform_output.copied_text.is_empty() {
+            egui_backend::copy_to_clipboard(&mut self.input_state, platform_output.copied_text);
+        }
+
+        //Display
+        let clipped_shapes = self.ctx.tessellate(shapes, pixels_per_point);
+        self.painter
+            .paint_and_update_textures(pixels_per_point, &clipped_shapes, &textures_delta);
+
+        action
+    }
+
+    //Display gui for about menu
+    pub fn display_about_screen(&mut self, gamestate: &mut Game) -> Option<GuiAction> {
+        let mut action = None;
+        let (w, h) = gamestate.get_window_size();
+
+        let pixels_per_point = self.input_state.pixels_per_point;
+        if self.ctx.pixels_per_point() != pixels_per_point {
+            self.ctx.set_pixels_per_point(pixels_per_point);
+        }
+        self.ctx.begin_pass(self.input_state.input.take());
+
+        //Display asteroid textures
+        let margin = 160.0;
+        let width = w as f32 / pixels_per_point - margin * 2.0;
+        let height = h as f32 / pixels_per_point - 32.0;
+        egui::Window::new("about")
+            .frame(egui::Frame::none())
+            .movable(false)
+            .title_bar(false)
+            .scroll(true)
+            .fixed_size(vec2(width, height))
+            .fixed_pos(Pos2::new(margin, 16.0))
+            .show(&self.ctx, |ui| {
+                ui.vertical(|ui| {
+                    let title_text = RichText::new("About").size(32.0).color(Color32::WHITE);
+                    ui.label(title_text);
+                    //Return to main menu
+                    let main_menu = new_button(ui, "Main Menu", 16.0, GuiAction::GotoMainMenu);
+                    action = update_action(action, main_menu);
+                    ui.add_space(24.0);
+                    egui::ScrollArea::vertical().max_width(width).show(ui, |ui| { 
+                        //Display text
+                        display_lines(ui, &gamestate.about_text); 
+                    });
+                }); 
+            });
 
         //End frame
         let egui::FullOutput {
@@ -282,5 +441,8 @@ impl GuiController {
 pub fn handle_gui_action(gamestate: &mut Game, action: GuiAction) {
     match action {
         GuiAction::Restart => gamestate.restart(),
+        GuiAction::GotoMainMenu => gamestate.current_screen = GameScreen::MainMenu,
+        GuiAction::GotoAbout => gamestate.current_screen = GameScreen::About,
+        GuiAction::Quit => std::process::exit(0),
     }
 }

@@ -3,13 +3,12 @@ pub mod draw;
 pub mod sprite;
 pub mod update;
 
-use std::collections::VecDeque;
-
+use std::{collections::VecDeque, fs::File, io::Read};
 use crate::{flashcards::Flashcard, gui::GuiController, impfile, log::LogItem};
 use assets::models::ModelManager;
 use assets::shaders::ShaderManager;
 use assets::textures::TextureManager;
-use egui_gl_glfw::egui::FontDefinitions;
+use egui_gl_glfw::egui::{FontDefinitions, Event, MouseWheelUnit, emath};
 use glfw::{GlfwReceiver, WindowEvent};
 use sprite::{Asteroid, Explosion};
 
@@ -17,6 +16,14 @@ const DEFAULT_SPAWN_INTERVAL: f32 = 8.0;
 const DEFAULT_HEALTH: u32 = 5;
 pub const LEVELUP_ANIMATION_LENGTH: f32 = 2.0; //In seconds
 pub const DAMAGE_ANIMATION_LENGTH: f32 = 1.0; //In seconds
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum GameScreen {
+    MainMenu,
+    About,
+    LoadFlashcards,
+    Game,
+}
 
 //Application config values, these are not meant to be changed by normal users
 #[derive(Default)]
@@ -69,6 +76,8 @@ pub struct Game {
     pub levelup_animation_timer: f32,
     pub damage_animation_timer: f32,
     pub log: VecDeque<LogItem>,
+    pub current_screen: GameScreen,
+    pub about_text: Vec<String>,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -105,6 +114,8 @@ impl Game {
             levelup_animation_timer: 0.0,
             damage_animation_timer: 0.0,
             log: VecDeque::new(),
+            current_screen: GameScreen::Game,
+            about_text: vec![],
         }
     }
 
@@ -159,6 +170,14 @@ impl Game {
                     //Clear answer
                     self.submit_answer();
                     continue;
+                }
+                WindowEvent::Scroll(x, y) => {
+                    let mouse_wheel = Event::MouseWheel {
+                        unit: MouseWheelUnit::Line,
+                        delta: emath::vec2(x as f32, y as f32),
+                        modifiers: gui_controller.input_state.modifiers,
+                    };
+                    gui_controller.input_state.input.events.push(mouse_wheel);
                 }
                 _ => {}
             }
@@ -272,5 +291,36 @@ impl Game {
 
     pub fn time(&self) -> f32 {
         self.time
+    }
+
+    pub fn update_time(&mut self, dt: f32) {
+        self.time += dt;
+    }
+
+    pub fn get_window_size(&self) -> (i32, i32) {
+        (self.window_w, self.window_h)
+    }
+
+    //Opens assets/credits.txt and assets/about.txt
+    pub fn load_about(&mut self) {
+        //Load about
+        if let Ok(mut file) = File::open("assets/about.txt") {
+            let mut buf = String::new();
+            let res = file.read_to_string(&mut buf);
+            if let Err(msg) = res {
+                eprintln!("{msg}");
+            }
+            self.about_text.extend(buf.lines().map(|s| s.to_string())); 
+        }
+
+        //Load credits
+        if let Ok(mut file) = File::open("assets/credits.txt") {
+            let mut buf = String::new();
+            let res = file.read_to_string(&mut buf);
+            if let Err(msg) = res {
+                eprintln!("{msg}");
+            }
+            self.about_text.extend(buf.lines().map(|s| s.to_string())); 
+        } 
     }
 }

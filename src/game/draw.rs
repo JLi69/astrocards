@@ -157,6 +157,20 @@ fn display_icon(
 }
 
 impl Game {
+    pub fn draw_background_only(&self) {
+        let screen_mat = calculate_screen_mat(self.window_w, self.window_h);
+        let shader = self.shaders.use_program("quadshader");
+        shader.uniform_vec4f("tint", 1.0, 1.0, 1.0, 1.0);
+        shader.uniform_matrix4f("screen", &screen_mat);
+        //Draw the background
+        draw_background(self, &shader);
+
+        //Unbind textures
+        unsafe {
+            gl::BindTexture(gl::TEXTURE_2D, 0);
+        }
+    }
+
     pub fn draw(&self) {
         let screen_mat = calculate_screen_mat(self.window_w, self.window_h);
         let shader = self.shaders.use_program("quadshader");
