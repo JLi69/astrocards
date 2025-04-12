@@ -136,8 +136,10 @@ fn display_levelup(gamestate: &Game, ui: &Ui) {
     } else {
         -CANVAS_H / 2.0 + (80.0 + CANVAS_H / 2.0) * ((perc - 0.75) / 0.25).powi(2)
     };
+    let (dx, dy) = caclulate_canv_offset(w, h);
+    let screen_scale = calculate_screen_scale(w, h);
     painter.text(
-        gui_pos(CANVAS_W / 2.0, y, w, h),
+        gui_pos(CANVAS_W / 2.0, y, w, h) + vec2(dx, dy) / screen_scale,
         Align2::CENTER_CENTER,
         "LEVEL UP",
         font_id.clone(),
