@@ -16,6 +16,7 @@ pub enum GuiAction {
     GotoAbout,
     GotoLoadFlashcards,
     Load,
+    ToggleMute,
     Quit,
 }
 
@@ -252,17 +253,25 @@ impl GuiController {
                 })
             });
 
-        //Display go to main menu button
-        egui::Window::new("return_to_main_menu")
+        //Display go to main menu button and mute button
+        egui::Window::new("buttons")
             .frame(egui::Frame::none())
             .movable(false)
             .title_bar(false)
             .scroll(true)
-            .fixed_size(vec2(200.0, 80.0))
-            .fixed_pos(Pos2::new(w as f32 / pixels_per_point - 112.0, 10.0))
+            .fixed_size(vec2(90.0, 80.0))
+            .fixed_pos(Pos2::new(w as f32 / pixels_per_point - 98.0, 10.0))
             .show(&self.ctx, |ui| {
-                let main_menu = new_button(ui, "Main Menu", 16.0, GuiAction::GotoMainMenu);
-                action = update_action(action, main_menu);
+                ui.vertical_centered_justified(|ui| {
+                    let main_menu = new_button(ui, "Main Menu", 12.0, GuiAction::GotoMainMenu);
+                    action = update_action(action, main_menu);
+                    let mute = if gamestate.audio.muted() {
+                        new_button(ui, "Unmute", 12.0, GuiAction::ToggleMute)
+                    } else {
+                        new_button(ui, "Mute", 12.0, GuiAction::ToggleMute)
+                    };
+                    action = update_action(action, mute);
+                });
             });
 
         //Display game over screen
@@ -332,12 +341,13 @@ impl GuiController {
         //Display asteroid textures
         let width = w as f32 / pixels_per_point;
         let height = h as f32 / pixels_per_point;
+        const BOTTOM_HEIGHT: f32 = 32.0;
         egui::Window::new("main_menu")
             .frame(egui::Frame::none())
             .movable(false)
             .title_bar(false)
             .scroll(true)
-            .fixed_size(vec2(width, height))
+            .fixed_size(vec2(width, height - BOTTOM_HEIGHT))
             .fixed_pos(Pos2::new(0.0, 0.0))
             .show(&self.ctx, |ui| {
                 ui.vertical_centered(|ui| {
@@ -357,6 +367,24 @@ impl GuiController {
                     //Quit button
                     let quit = new_button(ui, "     Quit     ", 24.0, GuiAction::Quit);
                     action = update_action(action, quit);
+                });
+            });
+
+        egui::Window::new("mute")
+            .frame(egui::Frame::none())
+            .movable(false)
+            .title_bar(false)
+            .scroll(true)
+            .fixed_size(vec2(80.0, BOTTOM_HEIGHT))
+            .fixed_pos(Pos2::new(8.0, h as f32 / pixels_per_point - 32.0))
+            .show(&self.ctx, |ui| {
+                ui.vertical_centered_justified(|ui| {
+                    let mute = if gamestate.audio.muted() {
+                        new_button(ui, "Unmute", 16.0, GuiAction::ToggleMute)
+                    } else {
+                        new_button(ui, "Mute", 16.0, GuiAction::ToggleMute)
+                    };
+                    action = update_action(action, mute);
                 });
             });
 
@@ -538,6 +566,7 @@ pub fn handle_gui_action(gamestate: &mut Game, action: GuiAction) {
             }
             gamestate.current_screen = GameScreen::Game;
         }
+        GuiAction::ToggleMute => gamestate.audio.toggle_mute(),
         GuiAction::Quit => std::process::exit(0),
     }
 }

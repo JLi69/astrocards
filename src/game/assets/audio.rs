@@ -8,6 +8,7 @@ type Sfx = Buffered<Decoder<BufReader<File>>>;
 pub struct SfxPlayer {
     sources: HashMap<String, Sfx>,
     stream: Option<(OutputStream, OutputStreamHandle)>,
+    muted: bool,
 }
 
 fn sfx_from_file(path: &str) -> Result<Sfx, String> {
@@ -22,18 +23,24 @@ impl SfxPlayer {
             Ok((stream, stream_handle)) => Self {
                 sources: HashMap::new(),
                 stream: Some((stream, stream_handle)),
+                muted: false,
             },
             Err(msg) => {
                 eprintln!("{msg}");
                 Self {
                     sources: HashMap::new(),
                     stream: None,
+                    muted: false,
                 }
             }
         }
     }
 
     pub fn play(&self, id: &str) {
+        if self.muted {
+            return;
+        }
+
         if let Some((_, stream_handle)) = &self.stream {
             let src = match self.sources.get(id) {
                 Some(s) => s.clone(),
@@ -70,5 +77,13 @@ impl SfxPlayer {
                 }
             }
         }
+    }
+
+    pub fn toggle_mute(&mut self) {
+        self.muted = !self.muted
+    }
+
+    pub fn muted(&self) -> bool {
+        self.muted
     }
 }
