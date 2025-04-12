@@ -155,6 +155,7 @@ impl Game {
             if asteroid.at_bottom() || asteroid.destroyed {
                 let (x, y) = (asteroid.sprite.x, asteroid.sprite.y);
                 self.explosions.push(Explosion::new(x, y));
+                self.audio.play("explosion");
             }
         }
         self.asteroids = keep;

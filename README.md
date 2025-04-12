@@ -24,4 +24,5 @@ cargo build --release
 
 Source code: GPLv3
 
-For artwork, see `assets/credits.txt` for authors and the appropriate license.
+For artwork/sound effects, see `assets/credits.txt` for the original authors 
+and the appropriate license.

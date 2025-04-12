@@ -1,0 +1,11 @@
+# This contains the paths to the audio files
+# Audio entries must contain the following variable: `path`
+# `path` is the path to the audio file, relative to the executable
+
+"explosion" {
+	"path" = "assets/audio/explosion.wav";
+}
+
+"levelup" {
+	"path" = "assets/audio/levelup.wav";
+}

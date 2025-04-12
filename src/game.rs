@@ -3,6 +3,7 @@ pub mod draw;
 pub mod sprite;
 pub mod update;
 
+use self::assets::audio::SfxPlayer;
 use crate::{
     flashcards::{Flashcard, SET_PATH},
     gui::GuiController,
@@ -19,7 +20,7 @@ use std::{collections::VecDeque, fs::File, io::Read};
 
 const DEFAULT_SPAWN_INTERVAL: f32 = 8.0;
 const DEFAULT_HEALTH: u32 = 5;
-pub const LEVELUP_ANIMATION_LENGTH: f32 = 2.0; //In seconds
+pub const LEVELUP_ANIMATION_LENGTH: f32 = 2.5; //In seconds
 pub const DAMAGE_ANIMATION_LENGTH: f32 = 1.0; //In seconds
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -60,6 +61,7 @@ pub struct Game {
     pub shaders: ShaderManager,
     pub models: ModelManager,
     pub fonts: FontDefinitions,
+    pub audio: SfxPlayer,
     cfg: Config,
     window_w: i32,
     window_h: i32,
@@ -103,6 +105,7 @@ impl Game {
             textures: TextureManager::new(),
             shaders: ShaderManager::new(),
             models: ModelManager::new(),
+            audio: SfxPlayer::init(),
             fonts: FontDefinitions::default(),
             cfg: Config::default(),
             window_w: 0,
@@ -247,7 +250,6 @@ impl Game {
         }
 
         self.answer.clear();
-        self.advance_to_next_level();
     }
 
     pub fn advance_to_next_level(&mut self) {
@@ -281,6 +283,7 @@ impl Game {
             self.asteroids_until_next_level = calculate_asteroids_until_next(self.level);
             self.spawn_interval = calculate_spawn_interval(self.level);
             self.levelup_animation_timer = LEVELUP_ANIMATION_LENGTH;
+            self.audio.play("levelup");
         }
     }
 

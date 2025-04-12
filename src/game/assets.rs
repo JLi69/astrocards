@@ -1,3 +1,4 @@
+pub mod audio;
 pub mod models;
 pub mod shaders;
 pub mod textures;
@@ -46,5 +47,6 @@ impl Game {
         self.models.add_default_models();
         self.shaders.load_shaders("assets/shaders.impfile");
         self.textures.load_textures("assets/textures.impfile");
+        self.audio.load_audio("assets/audio.impfile");
     }
 }

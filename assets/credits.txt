@@ -38,3 +38,15 @@ Title: 16 Planet Sprites (planet.png)
 Author: Viktor Hahn (Viktor.Hahn@web.de)
 URL: https://opengameart.org/content/16-planet-sprites
 License: CC-BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0/)
+
+Audio used:
+-----------
+Title: New thing get! (levelup.wav)
+Author: congusbongus
+URL: https://opengameart.org/content/new-thing-get
+License: CC0
+
+Title: Dull explosion (explosion.wav)
+Author: qubodup
+URL: https://opengameart.org/content/dull-explosion
+License: CC0
