@@ -1,0 +1,22 @@
+# a list of common ions that might be used in a chemistry class
+# the charges of hte ions are in parenthesis
+# Format: "name" = "formula"
+
+"ions" {
+	"Ammonium" = "NH4(+)";
+	"Hydroxide" = "OH(-)";
+	"Nitrate" = "NO3(-)";
+	"Nitrite" = "NO2(-)";
+	"Acetate" = "C2H3O2(-)";
+	"Carbonate" = "CO3(-2)";
+	"Bicarbonate" = "HCO3(-)";
+	"Cyanide" = "CN(-)";
+	"Permaganate" = "MnO4(-)";
+	"Chromate" = "CrO4(-2)";
+	"Dichromate" = "Cr2O7(-2)";
+	"Amide" = "NH2(-)";
+	"Sulfate" = "SO4(-2)";
+	"Sulfite" = "SO3(-2)";
+	"Phosphate" = "PO4(-3)";
+	"Hydronium" = "H3O(+)";
+}

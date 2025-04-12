@@ -19,3 +19,9 @@ Release:
 ```
 cargo build --release
 ```
+
+## License
+
+Source code: GPLv3
+
+For artwork, see `assets/credits.txt` for authors and the appropriate license.
