@@ -502,7 +502,7 @@ impl GuiController {
                     ui.add_space(8.0);
                     egui::ScrollArea::vertical()
                         .max_width(width)
-                        .max_height(height - 256.0)
+                        .max_height(height - 160.0)
                         .show(ui, |ui| {
                             for set in &gamestate.set_paths {
                                 let text = RichText::new(set).size(16.0).color(Color32::WHITE);
