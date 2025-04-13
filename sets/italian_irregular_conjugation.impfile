@@ -1,0 +1,111 @@
+# This is a list of some notable irregular verbs in Italian and their conjugations
+
+# avere = to have
+"avere" {
+	"io (avere)" = "ho";
+	"tu (avere)" = "hai";
+	"lui/lei (avere)" = "ha";
+	"noi (avere)" = "abbiamo";
+	"voi (avere)" = "avete";
+	"loro (avere)" = "hanno";
+}
+
+# essere = to be (permanent)
+"essere" {
+	"io (essere)" = "sono";
+	"tu (essere)" = "sei";
+	"lui/lei (essere)" = "è";
+	"noi (essere)" = "siamo";
+	"voi (essere)" = "siete";
+	"loro (essere)" = "sono";
+}
+
+# andare = to go
+"andare" {
+	"io (andare)" = "vado";
+	"tu (andare)" = "vai";
+	"lui/lei (andare)" = "va";
+	"noi (andare)" = "andiamo";
+	"voi (andare)" = "andate";
+	"loro (andare)" = "vanno";
+}
+
+# stare = to be (temporary)
+"stare" {
+	"io (stare)" = "sto";
+	"tu (stare)" = "stai";
+	"lui/lei (stare)" = "sta";
+	"noi (stare)" = "stiamo";
+	"voi (stare)" = "state";
+	"loro (stare)" = "stanno";
+}
+
+# dare = to give
+"dare" {
+	"io (dare)" = "do";
+	"tu (dare)" = "dai";
+	"lui/lei (dare)" = "dà";
+	"noi (dare)" = "diamo";
+	"voi (dare)" = "date";
+	"loro (dare)" = "danno";
+}
+
+# fare = to do
+"fare" {
+	"io (fare)" = "faccio";
+	"tu (fare)" = "fai";
+	"lui/lei (fare)" = "fa";
+	"noi (fare)" = "facciamo";
+	"voi (fare)" = "fate";
+	"loro (fare)" = "fanno";
+}
+
+# dovere = to have to
+"dovere" {
+	"io (dovere)" = "devo";
+	"tu (dovere)" = "devi";
+	"lui/lei (dovere)" = "deve";
+	"noi (dovere)" = "dobbiamo";
+	"voi (dovere)" = "dovete";
+	"loro (dovere)" = "devono";
+}
+
+# potere = to be able to
+"potere" {
+	"io (potere)" = "posso";
+	"tu (potere)" = "puoi";
+	"lui/lei (potere)" = "può";
+	"noi (potere)" = "possiamo";
+	"voi (potere)" = "potete";
+	"loro (potere)" = "possono";
+}
+
+# volere = to want to
+"volere" {
+	"io (volere)" = "voglio";
+	"tu (volere)" = "vuoi";
+	"lui/lei (volere)" = "vuole";
+	"noi (volere)" = "vogliamo";
+	"voi (volere)" = "volete";
+	"loro (volere)" = "vogliono";
+}
+
+# sapere = to know (facts/information)
+"sapere" {
+	"io (sapere)" = "so";
+	"tu (sapere)" = "sai";
+	"lui/lei (sapere)" = "sa";
+	"noi (sapere)" = "sappiamo";
+	"voi (sapere)" = "sapete";
+	"loro (sapere)" = "sanno";
+}
+
+# piacere = to be pleasing
+"piacere" {
+	"io (piacere)" = "piaccio";
+	"tu (piacere)" = "piaci";
+	"lui/lei (piacere)" = "piace";
+	"noi (piacere)" = "piacciamo";
+	"voi (piacere)" = "piacete";
+	"loro (piacere)" = "piacciono";
+}
