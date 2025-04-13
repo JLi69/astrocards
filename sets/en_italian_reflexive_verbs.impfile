@@ -1,0 +1,64 @@
+# This is a list of common reflexive/reciprocal italian verbs and their English translations
+
+"-arsi" {
+	"to get used to" = "abituarsi";
+	"to get sick" = "ammalarsi";
+	"to fall asleep"  ="addormentarsi";
+	"to get mad" = "arrabiarsi";
+	"to complain" = "lamentarsi";
+	"to stop" = "fermarsi";
+	"to trust" = "fidarsi";
+	"to wake up" = "svegliarsi";
+	"to get bored" = "annoiarsi";
+	"to comb oneself" = "pettinarsi";
+	"to rest" = "riposarsi";
+	"to excuse oneself" = "scusarsi";
+	"to fall in love" = "innamorarsi";
+	"to make a mistake" = "sbagliarsi";
+	"to be satisfied with" = "accontentarsi";
+	"to be ashamed" = "vergognarsi";
+	"to hurry up" = "sbrigarsi";
+	"to hurt oneself" = "farsi male";
+
+	"to help each other" = "aiutarsi";
+	"to kiss each other" = "baciarsi";
+	"to love each other" = "amarsi";
+	"to meet each other" = "incontrarsi";
+	"to look at each other" = "guardarsi";
+	"to greet each other" = "salutarsi";
+	"to call each other" = "telefonarsi";
+	"to respect each other" = "rispettarsi";
+	"to marry each other" = "sposarsi";
+	"to insult each other" = "insultarsi";
+	"to divorce each other" = "divorziarsi";
+	"to seperate from each other" = "separarsi";
+	"to hit each other" = "picchiarsi";
+}
+
+"-ersi" {
+	"to put on" = "mettersi";
+	"to sit down" = "sedersi";
+	"to hide oneself" = "nascondersi";
+	"to get lost" = "perdersi";
+	"to break" = "rompersi";
+	"to be surprised" = "sorprendersi";
+	"to notice" = "accorgersi";
+	"to get emotional" = "commuoversi";
+	"to decide" = "decidersi";
+
+	"to see each other" = "vedersi";
+	"to know each other" = "conoscersi";
+	"to write to each other" = "scriversi";
+	"to like each other" = "piacersi";
+}
+
+"-irsi" {
+	"to clean oneself" = "pulirsi";
+	"to feel" = "sentirsi";
+	"to repent" = "pentirsi";
+	"to have fun" = "divertirsi";
+	"to relocate" = "trasferirsi";
+	"to get dressed" = "vestirsi";
+
+	"to understand each other" = "capirsi";
+}
