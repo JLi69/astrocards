@@ -1,0 +1,203 @@
+# This is a list of common Italian nouns and their English translations
+# Most of the nouns here are in their singular form with some exceptions
+
+# a list of body parts in Italian
+"bodyparts" {
+	"head" = "la testa";
+	"face" = "il viso";
+	"two eyes" = "due occhi";
+	"hair" = "i capelli";
+	"hand" = "la mano";
+	"finger" = "il dito";
+}
+
+# a list of food in Italian
+"food" {
+	"breakfast" = "la colazione";
+	"coffee" = "il caffè";
+	"bread" = "il pane";
+	"egg" = "l'uovo";
+	"lunch" = "il pranzo";
+	"dinner" = "la cena";
+	"appetizers" = "gli antipasti";
+	"soup" = "la zuppa";
+	"meat" = "la carne";
+	"beef" = "il manzo";
+	"chicken" = "il pollo";
+	"pig" = "il maiale";
+	"fish" = "il pesce";
+	"vegetables" = "le verdure";
+	"tomatoes" = "i pomodori";
+	"lettuce" = "la lattuga";
+	"cucumbers" = "i cetriolli";
+	"potatoes" = "le patate";
+	"carrots" = "le carote";
+	"garlic" = "l'aglio";
+	"fruit" = "la frutta";
+	"apple" = "la mela";
+	"peach" = "la pesca";
+	"grapes" = "l'uva";
+	"plum" = "la susina";
+	"pineapple" = "l'ananas";
+	"fig" = "il fico";
+	"orange" = "l'arancia";
+	"watermelon" = "il cocmero";
+	"strawberry" = "la fragola";
+	"prune" = "la prugna";
+	"deserts" = "i dolci";
+	"donut" = "il bombolone";
+	"cookie" = "il biscotto";
+	"ice cream" = "il gelato";
+}
+
+# a list of places
+"places" {
+	"library" = "la biblioteca";
+	"office" = "il ufficio";
+	"mountains" = "la montagna";
+	"city" = "la città";
+	"pharmacy" = "la farmacia";
+	"school" = "la scuola";
+	"home" = "la casa";
+	"unveristy" = "la università";
+}
+
+# a list of family members
+"family" {
+	"father" = "il padre";
+	"mother" = "la madre";
+	"brother" = "il fratello";
+	"sister" = "la sorella";
+	"younger brother" = "il fratellino";
+	"younger sister" = "la sorellina";
+	"parents" = "genitori";
+	"uncle" = "lo zio";
+	"aunt" = "la zia";
+	"grandparents" = "i nonni";
+	"grandfather" = "il nonno";
+	"grandmother" = "la nonna";
+	"son" = "il figlio";
+	"daughter" = "la figlia";
+	"husband" = "il marito";
+	"wife" = "la moglie";
+	"grandchild/nephew/niece" = "nipote";
+}
+
+# a list of animals
+"animals" {
+	"dog" = "il cane";
+	"cat" = "il gatto";
+	"bird" = "l'uccello";
+	"horse" = "il cavallo";
+	"cow" = "la mucca";
+	"bull" = "il toro";
+	"sheep" = "la pecora";
+	"hen" = "la gallina";
+	"rooster" = "il gallo";
+	"fox" = "la volpe";
+	"wolf" = "il lupo";
+	"bee" = "l'ape";
+}
+
+# A list of other nouns
+# Taken from: https://commonlyusedwords.com/top-100-italian-nouns/
+"noun" {
+	"part" = "la parte";
+	"time" = "il tempo";
+	"way" = "il modo";
+	"life" = "la vita";
+	"case" = "il caso";
+	"Rome" = "Roma";
+	"Italy" = "Italia";
+	"work" = "il lavoro";
+	"point" = "il punto";
+	"time" = "la volta";
+	"thing" = "la cosa";
+	"world" = "il mondo";
+	"Milan" = "Milano";
+	"shape" = "la forma";
+	"end" = "il fine";
+	"place" = "il luogo";
+	"war" = "la guerra";
+	"nature" = "la natura";
+	"moment" = "il momento";
+	"example" = "il esempio";
+	"work, opera" = "la opera";
+	"day" = "il giorno";
+	"base" = "la base";
+	"number" = "il numero";
+	"year" = "il anno";
+	"street" = "la via";
+	"name" = "il nome";
+	"man" = "il uomo";
+	"report, relationship" = "il rapporto";
+	"value" = "il valore";
+	"activity" = "la attività";
+	"reality" = "la realtà";
+	"problem" = "la problema";
+	"period" = "il periodo";
+	"means" = "il mezzo";
+	"care" = "la cura";
+	"order" = "il ordine";
+	"principle, beginning" = "il principio";
+	"house, home" = "la casa";
+	"reason" = "la ragione";
+	"death" = "la morte";
+	"force" = "la forza";
+	"word" = "la parola";
+	"type" = "il tipo";
+	"character" = "il carattere";
+	"God" = "Dio";
+	"government" = "il governo";
+	"cause" = "la causa";
+	"Florence" = "Firenze";
+	"freedom" = "la libertà";
+	"politics" = "la politica";
+	"process" = "il processo";
+	"hand" = "la mano";
+	"thought" = "il pensiero";
+	"surface, level" = "il piano";
+	"count, bill" = "il conto";
+	"question" = "la questione";
+	"action" = "la azione";
+	"front, forehead" = " fronte";
+	"element" = "il elemento";
+	"earth" = "la terra";
+	"production" = "la produzione";
+	"Naples" = "Napoli";
+	"field" = "il campo";
+	"search" = "la ricerca";
+	"relationship" = "la relazione";
+	"country" = "il paese";
+	"France" = "Francia";
+	"Turin" = "Torino";
+	"body" = "il corpo";
+	"presence" = "la presenza";
+	"book" = "il libro";
+	"act" = "il atto";
+	"family" = "la famiglia";
+	"text" = "il testo";
+	"possibility" = "la possibilità";
+	"bottom" = "il fondo";
+	"person" = "la persona";
+	"material, subject" = "la materia";
+	"course" = "il corso";
+	"degree" = "il grado";
+	"light" = "la luce";
+	"end" = "il termine";
+	"view" = "la vista";
+	"culture" = "la cultura";
+	"need" = "la necessità";
+	"people" = "il popolo";
+	"kind" = "il genere";
+	"church" = "la chiesa";
+	"function" = "la funzione";
+	"title" = "il titolo";
+	"use" = "il uso";
+	"group" = "il gruppo";
+	"opinion" = "il giudizio";
+	"king" = "il re";
+	"letter" = "la lettera";
+	"advice" = "il consiglio";
+	"interest" = "il interesse";
+}
