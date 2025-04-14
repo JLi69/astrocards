@@ -231,7 +231,6 @@ impl GuiController {
         }
         self.ctx.begin_pass(self.input_state.input.take());
 
-        //Display asteroid textures
         egui::CentralPanel::default()
             .frame(egui::Frame::none())
             .show(&self.ctx, |ui| {
@@ -340,7 +339,6 @@ impl GuiController {
         }
         self.ctx.begin_pass(self.input_state.input.take());
 
-        //Display asteroid textures
         let width = w as f32 / pixels_per_point;
         let height = h as f32 / pixels_per_point;
         const BOTTOM_HEIGHT: f32 = 32.0;
@@ -423,7 +421,6 @@ impl GuiController {
         }
         self.ctx.begin_pass(self.input_state.input.take());
 
-        //Display asteroid textures
         let margin = 160.0;
         let width = w as f32 / pixels_per_point - margin * 2.0;
         let height = h as f32 / pixels_per_point - 32.0;
@@ -484,9 +481,7 @@ impl GuiController {
         }
         self.ctx.begin_pass(self.input_state.input.take());
 
-        //Display asteroid textures
-        let margin = 160.0;
-        let width = w as f32 / pixels_per_point - margin * 2.0;
+        let width = w as f32 / pixels_per_point * 0.5;
         let height = h as f32 / pixels_per_point - 32.0;
         egui::Window::new("load_sets")
             .frame(egui::Frame::none())
@@ -494,7 +489,7 @@ impl GuiController {
             .title_bar(false)
             .scroll(true)
             .fixed_size(vec2(width, height))
-            .fixed_pos(Pos2::new(margin, 16.0))
+            .fixed_pos(Pos2::new(width * 0.5, 16.0))
             .show(&self.ctx, |ui| {
                 ui.vertical_centered(|ui| {
                     let title_text = RichText::new("Load Sets").size(32.0).color(Color32::WHITE);
