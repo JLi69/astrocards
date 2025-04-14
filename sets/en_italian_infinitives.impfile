@@ -28,6 +28,12 @@
 	"to be (temporary)" = "stare";
 	"to give" = "dare";
 	"to do" = "fare";
+	"to send" = "mandare";
+	"to buy" = "comprare";
+	"to explain" = "spiegare";
+	"to prepare" = "preparare";
+	"to give as a gift" = "regalare";
+	"to show" = "mostrare";
 }
 
 "-ere" {
@@ -35,7 +41,6 @@
 	"to be (permanent)" = "essere";
 	"to write" = "scrivere";
 	"to read" = "leggere";
-	"to win" = "vincire";
 	"to cry" = "piangere";
 	"to know (person/location)" = "conoscere";
 	"to reply" = "rispondere"; 
@@ -60,6 +65,8 @@
 }
 
 "-ire" {
+	"to win" = "vincire";
+	"to offer" = "offrire";
 	"to listen" = "sentire";
 	"to leave for a trip" = "partire";
 	"to follow" = "seguire";

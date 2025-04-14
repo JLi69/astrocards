@@ -1,0 +1,57 @@
+# a list of common italian adjectives
+# NOTE: all adjectives here are in the masculine singular form
+
+"adjectives" {
+	"thin" = "magro";
+	"cheerful" = "allegro";
+	"American" = "americano";
+	"small" = "piccolo";
+	"smart" = "intelligenete";
+	"French" = "francese";
+	"kind" = "gentile";
+	"big" = "grande";
+	"handsome/beautiful" = "bello";
+	"ugly" = "brutto";
+	"pretty/cute" = "carino";
+	"strong" = "forte";
+	"weak" = "debole";
+	"fat" = "grasso";
+	"tall" = "alto";
+	"short" = "basso";
+	"young" = "giovane";
+	"old" = "vecchio";
+	"blonde" = "biondo";
+	"brunette/dark haired" = "bruno";
+	"straight haired" = "liscio";
+	"curly haired" = "riccio";
+	"bald" = "calvo";
+	"friendly" = "simpatico";
+	"cheerful" = "allegro";
+	"sad" = "triste";
+	"shy" = "timido";
+	"funny" = "buffo";
+	"kind" = "gentile";
+	"generous" = "generoso";
+	"silly" = "sciocco";
+	"annoying/boring" = "noioso";
+	"fun" = "divertente";
+	"lively" = "vivace";
+	"messy" = "disordinato";
+	"fast" = "veloce";
+	"slow" = "lento";
+}
+
+"colors" {
+	"red" = "rosso";
+	"green" = "verde";
+	"yellow" = "giallo";
+	"blue" = "blu";
+	"orange" = "arancione";
+	"pink" = "rosa";
+	"violet" = "viola";
+	"brown" = "marrone";
+	"azure" = "azzurro";
+	"white" = "bianco";
+	"black" = "nero";
+	"grey" = "grigio";
+}
