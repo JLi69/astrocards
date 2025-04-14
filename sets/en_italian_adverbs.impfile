@@ -1,0 +1,74 @@
+# List of common adverbs in Italian and their English translations
+
+"adverbs" {
+	"now" = "ora";
+	"tommorrow" = "domani";
+	"yesterday" = "ieri";
+	"always" = "sempre";
+	"often" = "spesso";
+	"early/soon" = "presto";
+	"late" = "tardi";
+	"immediately" = "subito";
+	"in the daytime" = "di giorno";
+	"at night" = "di giorno";
+	"in the morning" = "di mattina";
+	"from time to time" = "di tanto in tanto";
+	"once/in the past" = "una volta";
+
+	"here" = "qui";
+	"there" = "là";
+	"over" = "sopra";
+	"under" = "sotto";
+	"up" = "su";
+	"down" = "giù";
+	"down there" = "laggiù";
+	"near" = "vicino";
+	"far" = "lontano";
+	"everywhere" = "ovunque";
+
+	"a little" = "poco";
+	"a lot" = "molto";
+	"too much" = "troppo";
+	"enough" = "abbastanza";
+	"less" = "meno";
+	"more" = "più";
+	"about" = "pressappoco";
+	"approximately" = "all'incirca";
+
+	"yes" = "sì";
+	"certainly/of course" = "certo";
+	"surely" = "sicuro";
+	"really/definitely/truly" = "davvero";
+	"no" = "no";
+	"not even" = "neppure";
+	"never" = "mai";
+	"at all" = "affatto";
+	"maybe" = "forse";
+	"who knows" = "chissà";
+	"almost" = "quasi";
+
+	"slowly" = "piano";
+	"fast/hard" = "forte";
+	"well" = "bene";
+	"badly" = "male";
+	"better" = "meglio";
+	"worse" = "peggio";
+	"with pleasure" = "volentieri";
+
+	"on foot" = "a piedi";
+	"on horseback" = "a cavallo";
+	"running" = "di corsa";
+	"quickly" = "alla svelta";
+	"in a rush" = "di fretta";
+	"eye to eye" = "a quattr'occhi";
+	"excessively" = "a dismisura";
+	"without paying" = "alla portoghese";
+	"in a short while" = "tra breve";
+	"forever" = "per sempre";
+	"calmly" = "con calma";
+	"usually" = "di solito";
+	"once in a while" = "ogni tanto";
+	"sometimes" = "a volte";
+	"alone" = "da solo";
+	"beautifully" = "a meraviglia";
+}
