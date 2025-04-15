@@ -505,7 +505,18 @@ impl GuiController {
                         .max_height(height - 160.0)
                         .show(ui, |ui| {
                             for set in &gamestate.set_paths {
-                                let text = RichText::new(set).size(16.0).color(Color32::WHITE);
+                                //Replace underscores with spaces and capitalize each word
+                                let text = set.split("_")
+                                    .map(|word| {
+                                        let mut chars = word.chars();
+                                        match chars.next() {
+                                            Some(first) => first.to_uppercase().next().unwrap_or(first).to_string() + chars.as_str(),
+                                            None => String::new(),
+                                        }
+                                    })
+                                    .collect::<Vec<String>>()
+                                    .join(" ");
+                                let text = RichText::new(text).size(16.0).color(Color32::WHITE);
                                 ui.selectable_value(
                                     &mut gamestate.selected_set_path,
                                     set.clone(),
