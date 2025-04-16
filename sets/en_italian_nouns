@@ -70,7 +70,7 @@
 	"sister" = "la sorella";
 	"younger brother" = "il fratellino";
 	"younger sister" = "la sorellina";
-	"parents" = "genitori";
+	"parents" = "i genitori";
 	"uncle" = "lo zio";
 	"aunt" = "la zia";
 	"grandparents" = "i nonni";
@@ -80,7 +80,7 @@
 	"daughter" = "la figlia";
 	"husband" = "il marito";
 	"wife" = "la moglie";
-	"grandchild/nephew/niece" = "nipote";
+	"grandchild/nephew/niece" = "il nipote";
 }
 
 # a list of animals
