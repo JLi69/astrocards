@@ -8,6 +8,7 @@ use crate::{
     flashcards::{Flashcard, SET_PATH},
     gui::GuiController,
     impfile,
+    learn::LearnState,
     log::LogItem,
 };
 use assets::models::ModelManager;
@@ -29,6 +30,7 @@ pub enum GameScreen {
     About,
     LoadFlashcards,
     Game,
+    Learn,
 }
 
 //Application config values, these are not meant to be changed by normal users
@@ -87,6 +89,8 @@ pub struct Game {
     pub about_text: Vec<String>,
     pub set_paths: Vec<String>,
     pub selected_set_path: String,
+    //Learn state
+    pub learn_state: LearnState,
 }
 
 type EventHandler = GlfwReceiver<(f64, WindowEvent)>;
@@ -128,6 +132,7 @@ impl Game {
             about_text: vec![],
             set_paths: vec![],
             selected_set_path: String::new(),
+            learn_state: LearnState::empty(),
         }
     }
 
@@ -179,6 +184,11 @@ impl Game {
                 WindowEvent::Size(w, h) => handle_window_resize(self, w, h),
                 WindowEvent::Key(glfw::Key::Enter, _, glfw::Action::Press, _)
                 | WindowEvent::Key(glfw::Key::KpEnter, _, glfw::Action::Press, _) => {
+                    if self.current_screen == GameScreen::Learn {
+                        self.learn_state.submit(&self.answer);
+                        self.answer.clear();
+                        continue;
+                    }
                     //Clear answer
                     self.submit_answer();
                     continue;

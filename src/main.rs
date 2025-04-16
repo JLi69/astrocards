@@ -6,6 +6,7 @@ mod game;
 mod gfx;
 mod gui;
 mod impfile;
+mod learn;
 mod log;
 
 use game::{Game, GameScreen};
@@ -73,6 +74,19 @@ fn run_load_flashcards(gamestate: &mut Game, gui_controller: &mut GuiController,
     }
 }
 
+fn run_learn(gamestate: &mut Game, gui_controller: &mut GuiController, dt: f32) {
+    //Display background
+    gamestate.draw_background_only();
+    gamestate.update_time(dt);
+    gamestate.learn_state.update(dt);
+    //Display gui
+    gui::set_ui_gl_state();
+    let gui_action = gui_controller.display_learn_gui(gamestate);
+    if let Some(action) = gui_action {
+        gui::handle_gui_action(gamestate, action);
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut glfw = glfw::init(glfw::fail_on_errors).expect("Failed to init glfw!");
@@ -130,6 +144,7 @@ fn main() {
             GameScreen::LoadFlashcards => {
                 run_load_flashcards(&mut gamestate, &mut gui_controller, dt)
             }
+            GameScreen::Learn => run_learn(&mut gamestate, &mut gui_controller, dt),
         }
 
         //Print OpenGL errors

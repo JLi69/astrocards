@@ -1,8 +1,9 @@
-use crate::flashcards;
+use crate::flashcards::{self, Flashcard};
 use crate::game::draw::{CANVAS_H, CANVAS_W, caclulate_canv_offset, calculate_screen_scale};
 use crate::game::{Game, GameScreen};
+use crate::learn::LearnState;
 use cgmath::Vector4;
-use egui_backend::egui::{self, RichText};
+use egui_backend::egui::{self, ProgressBar, RichText};
 use egui_backend::egui::{Align2, Color32, FontId, Pos2, RawInput, Rect, Ui, vec2};
 use egui_backend::{EguiInputState, Painter};
 use egui_gl_glfw as egui_backend;
@@ -17,6 +18,7 @@ pub enum GuiAction {
     GotoLoadFlashcards,
     Load,
     ToggleMute,
+    GotoLearn,
     Quit,
 }
 
@@ -497,7 +499,7 @@ impl GuiController {
                     ui.add_space(8.0);
                     egui::ScrollArea::vertical()
                         .max_width(width)
-                        .max_height(height - 160.0)
+                        .max_height(height - 180.0)
                         .show(ui, |ui| {
                             for set in &gamestate.set_paths {
                                 let text = RichText::new(set).size(16.0).color(Color32::WHITE);
@@ -508,11 +510,77 @@ impl GuiController {
                                 );
                             }
                         });
-                    ui.add_space(8.0);
+                    ui.add_space(24.0);
                     //Load set
-                    let load = new_button(ui, "Load", 16.0, GuiAction::Load);
+                    let load = new_button(ui, "Play Asteroids", 16.0, GuiAction::Load);
+                    action = update_action(action, load);
+                    //Start learn
+                    let load = new_button(ui, "Learn", 16.0, GuiAction::GotoLearn);
                     action = update_action(action, load);
                     //Return to main menu
+                    let main_menu = new_button(ui, "Main Menu", 16.0, GuiAction::GotoMainMenu);
+                    action = update_action(action, main_menu);
+                });
+            });
+
+        //End frame
+        let egui::FullOutput {
+            platform_output,
+            textures_delta,
+            shapes,
+            pixels_per_point: _,
+            viewport_output: _,
+        } = self.ctx.end_pass();
+
+        //Handle copy pasting
+        if !platform_output.copied_text.is_empty() {
+            egui_backend::copy_to_clipboard(&mut self.input_state, platform_output.copied_text);
+        }
+
+        //Display
+        let clipped_shapes = self.ctx.tessellate(shapes, pixels_per_point);
+        self.painter
+            .paint_and_update_textures(pixels_per_point, &clipped_shapes, &textures_delta);
+
+        action
+    }
+
+    //Display gui for learn
+    pub fn display_learn_gui(&mut self, gamestate: &mut Game) -> Option<GuiAction> {
+        let mut action = None;
+        let (w, h) = gamestate.get_window_size();
+
+        let pixels_per_point = self.input_state.pixels_per_point;
+        if self.ctx.pixels_per_point() != pixels_per_point {
+            self.ctx.set_pixels_per_point(pixels_per_point);
+        }
+        self.ctx.begin_pass(self.input_state.input.take());
+
+        let width = w as f32 / pixels_per_point - 64.0;
+        let height = h as f32 / pixels_per_point - 64.0;
+        egui::Window::new("load_sets")
+            .movable(false)
+            .title_bar(false)
+            .scroll(true)
+            .fixed_size(vec2(width, height))
+            .fixed_pos(Pos2::new(24.0, 24.0))
+            .show(&self.ctx, |ui| {
+                ui.vertical_centered(|ui| {
+                    let heading = RichText::new("Learn").size(28.0).color(Color32::WHITE);
+                    ui.heading(heading);
+                    //Progress bar
+                    let progress = ProgressBar::new(gamestate.learn_state.percent());
+                    ui.add(progress);
+                    //Display question
+                    learn_question(gamestate, ui);
+
+                    if !gamestate.learn_state.mcq.is_empty() {
+                        mcq_gui(gamestate, ui);
+                    } else if !gamestate.learn_state.frq.is_empty() {
+                        frq_gui(gamestate, ui);
+                    }
+
+                    ui.add_space(32.0);
                     let main_menu = new_button(ui, "Main Menu", 16.0, GuiAction::GotoMainMenu);
                     action = update_action(action, main_menu);
                 });
@@ -564,6 +632,106 @@ pub fn handle_gui_action(gamestate: &mut Game, action: GuiAction) {
             gamestate.current_screen = GameScreen::Game;
         }
         GuiAction::ToggleMute => gamestate.audio.toggle_mute(),
+        GuiAction::GotoLearn => {
+            if gamestate.selected_set_path.is_empty() {
+                return;
+            }
+            gamestate.restart();
+            let path = vec![flashcards::get_set_path(&gamestate.selected_set_path)];
+            gamestate.flashcards = flashcards::load_flashcards(&path);
+            gamestate.answer.clear();
+            gamestate.current_screen = GameScreen::Learn;
+            gamestate.learn_state = LearnState::new(&gamestate.flashcards);
+            gamestate.learn_state.set_mcq_ans();
+        }
         GuiAction::Quit => std::process::exit(0),
+    }
+}
+
+//Display learn gui
+pub fn learn_question(gamestate: &mut Game, ui: &mut Ui) {
+    if let Some(flashcard) = gamestate.learn_state.get_flashcard() {
+        let q = RichText::new(&flashcard.question)
+            .size(24.0)
+            .color(Color32::WHITE);
+        ui.label(q);
+    } else {
+        let msg = RichText::new("You Finished!")
+            .size(28.0)
+            .color(Color32::GREEN);
+        ui.label(msg);
+    }
+}
+
+pub fn mcq_gui(gamestate: &mut Game, ui: &mut Ui) {
+    //Display answer options
+    let card = gamestate
+        .learn_state
+        .get_flashcard()
+        .unwrap_or(Flashcard::none());
+    let mut clicked = false;
+    for ans in &gamestate.learn_state.mcq_ans {
+        let text = if gamestate.learn_state.display_correct() {
+            //Change color of text if we are displaying the correct answer
+            let col = if card.answer == *ans {
+                Color32::GREEN
+            } else {
+                Color32::RED
+            };
+            RichText::new(ans).size(12.0).color(col)
+        } else {
+            RichText::new(ans).size(12.0).color(Color32::WHITE)
+        };
+        if ui.button(text).clicked() {
+            gamestate.answer = ans.to_string();
+            clicked = true;
+        }
+    }
+
+    if gamestate.learn_state.display_correct() {
+        //Display whether the user got it correct or not
+        let text = if gamestate.learn_state.answer == card.answer {
+            RichText::new("Correct!").color(Color32::GREEN)
+        } else {
+            RichText::new("Incorrect!").color(Color32::RED)
+        };
+        ui.label(text);
+        //Display the correct answer
+        let answer_text = format!("The correct answer was: {}", card.answer);
+        ui.label(answer_text);
+    }
+
+    if clicked {
+        gamestate.learn_state.submit(&gamestate.answer);
+        gamestate.answer.clear();
+    }
+}
+
+pub fn frq_gui(gamestate: &mut Game, ui: &mut Ui) {
+    //Display answer options
+    let card = gamestate
+        .learn_state
+        .get_flashcard()
+        .unwrap_or(Flashcard::none());
+
+    ui.text_edit_singleline(&mut gamestate.answer);
+
+    let submit = RichText::new("Submit").color(Color32::WHITE);
+    if ui.button(submit).clicked() {
+        gamestate.learn_state.submit(&gamestate.answer);
+        gamestate.answer.clear();
+    }
+
+    if gamestate.learn_state.display_correct() {
+        //Display whether the user got it correct or not
+        let text = if gamestate.learn_state.answer == card.answer {
+            RichText::new("Correct!").color(Color32::GREEN)
+        } else {
+            RichText::new("Incorrect!").color(Color32::RED)
+        };
+        ui.label(text);
+        //Display the correct answer
+        let answer_text = format!("The correct answer was: {}", card.answer);
+        ui.label(answer_text);
     }
 }
