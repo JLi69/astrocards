@@ -1,6 +1,7 @@
 Astrocards Credits
 ------------------
-Programming by Nullptr Error ("JLi69")
+by Nullptr Error ("JLi69")
+Contributors: gldeA
 License: GPLv3
 
 Font used:

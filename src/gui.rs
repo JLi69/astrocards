@@ -503,11 +503,19 @@ impl GuiController {
                         .show(ui, |ui| {
                             for set in &gamestate.set_paths {
                                 //Replace underscores with spaces and capitalize each word
-                                let text = set.split("_")
+                                let text = set
+                                    .split("_")
                                     .map(|word| {
                                         let mut chars = word.chars();
                                         match chars.next() {
-                                            Some(first) => first.to_uppercase().next().unwrap_or(first).to_string() + chars.as_str(),
+                                            Some(first) => {
+                                                first
+                                                    .to_uppercase()
+                                                    .next()
+                                                    .unwrap_or(first)
+                                                    .to_string()
+                                                    + chars.as_str()
+                                            }
                                             None => String::new(),
                                         }
                                     })
