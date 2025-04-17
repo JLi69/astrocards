@@ -1,10 +1,10 @@
 # This is a list of common italian infinitives and their English translations
 
 "-are" {
-	"to live" = "abitare";
+	"to live/reside" = "abitare";
 	"to arrive" = "arrivare";
 	"to wait" = "aspettare";
-	"to listen" = "ascoltare";
+	"to actively hear" = "ascoltare";
 	"to dance" = "ballare";
 	"to sing" = "cantare";
 	"to seek" = "cercare";
@@ -45,7 +45,7 @@
 	"to know (person/location)" = "conoscere";
 	"to reply" = "rispondere"; 
 	"to spend" = "spendere";
-	"to live" = "vivere";
+	"to live/be alive" = "vivere";
 	"to ask" = "chiedere";
 	"to close/shut" = "chiudere";
 	"to put" = "mettere";
@@ -67,7 +67,7 @@
 "-ire" {
 	"to win" = "vincire";
 	"to offer" = "offrire";
-	"to listen" = "sentire";
+	"to hear/feel" = "sentire";
 	"to leave for a trip" = "partire";
 	"to follow" = "seguire";
 	"to open" = "aprire";
