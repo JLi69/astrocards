@@ -52,7 +52,7 @@ impl ShaderManager {
 
     //Loads shaders, should be called at the beginning of the program
     pub fn load_shaders(&mut self, path: &str) {
-        let shaders = impfile::parse_file(path);
+        let shaders = impfile::find_impfile(path);
         for entry in shaders {
             let metadata = ShaderMetaData::from_entry(&entry);
             let shader = assets::program_from_vert_and_frag(&metadata.vert, &metadata.frag);

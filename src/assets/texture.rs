@@ -1,9 +1,10 @@
-use std::fs::File;
+use crate::game::assets::open_file;
 use std::os::raw::c_void;
+use std::str;
 
 #[allow(dead_code)]
 pub fn load_image_pixels(path: &str) -> Result<(Vec<u32>, png::OutputInfo), String> {
-    let file = File::open(path).map_err(|e| e.to_string())?;
+    let file = open_file(path)?;
     let decoder = png::Decoder::new(file);
     let mut reader = decoder.read_info().map_err(|e| e.to_string())?;
 
@@ -42,7 +43,7 @@ impl Texture {
     //Attempt to load texture from a PNG file
     //(assume that the PNG file has its colors encoded in RGBA)
     pub fn load_from_file(path: &str) -> Result<Self, String> {
-        let file_res = File::open(path);
+        let file_res = open_file(path);
 
         match file_res {
             Ok(file) => {

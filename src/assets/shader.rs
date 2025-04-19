@@ -1,16 +1,15 @@
 extern crate gl;
 use gl::types::*;
 
+use crate::game::assets::open_file;
 use cgmath::{Matrix, Matrix4};
 use std::ffi::CString;
-use std::fs::File;
 use std::io::Read;
-use std::path::Path;
 use std::str;
 
 fn read_shader_src_file(path: &str) -> String {
     //Attempt to open the shader source file
-    let file = File::open(Path::new(path));
+    let file = open_file(path);
 
     match file {
         Ok(mut shader_file) => {

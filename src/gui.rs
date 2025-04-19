@@ -501,7 +501,7 @@ impl GuiController {
                         .max_width(width)
                         .max_height(height - 180.0)
                         .show(ui, |ui| {
-                            for set in &gamestate.set_paths {
+                            for (set, dir) in &gamestate.set_paths {
                                 //Replace underscores with spaces and capitalize each word
                                 let text = set
                                     .split("_")
@@ -524,7 +524,7 @@ impl GuiController {
                                 let text = RichText::new(text).size(16.0).color(Color32::WHITE);
                                 ui.selectable_value(
                                     &mut gamestate.selected_set_path,
-                                    set.clone(),
+                                    format!("{}/{}", dir.clone(), set.clone()),
                                     text,
                                 );
                             }
@@ -643,7 +643,7 @@ pub fn handle_gui_action(gamestate: &mut Game, action: GuiAction) {
                 return;
             }
             gamestate.restart();
-            let path = vec![flashcards::get_set_path(&gamestate.selected_set_path)];
+            let path = vec![gamestate.selected_set_path.clone()];
             gamestate.flashcards = flashcards::load_flashcards(&path);
             if gamestate.flashcards.is_empty() {
                 return;
@@ -656,7 +656,7 @@ pub fn handle_gui_action(gamestate: &mut Game, action: GuiAction) {
                 return;
             }
             gamestate.restart();
-            let path = vec![flashcards::get_set_path(&gamestate.selected_set_path)];
+            let path = vec![gamestate.selected_set_path.clone()];
             gamestate.flashcards = flashcards::load_flashcards(&path);
             gamestate.answer.clear();
             gamestate.current_screen = GameScreen::Learn;

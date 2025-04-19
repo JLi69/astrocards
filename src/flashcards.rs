@@ -41,7 +41,3 @@ pub fn load_flashcards(paths: &[String]) -> Vec<Flashcard> {
         .flat_map(|path| load_flashcards_from_file(path))
         .collect()
 }
-
-pub fn get_set_path(filename: &str) -> String {
-    format!("{SET_PATH}/{filename}")
-}

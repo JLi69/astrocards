@@ -341,3 +341,23 @@ pub fn parse_file(path: &str) -> EntryList {
 
     entries
 }
+
+//Attempts to find an impfile in the current working directory but if it fails
+//it then searches in /usr/share/games/astrocards/ (on unix systems only)
+pub fn find_impfile(path: &str) -> EntryList {
+    let entries = parse_file(path);
+    if !entries.is_empty() {
+        return entries;
+    }
+   
+    #[cfg(unix)]
+    {
+        let usr_share = format!("/usr/share/games/astrocards/{path}");
+        let entries = parse_file(&usr_share);
+        if !entries.is_empty() {
+            return entries;
+        }
+    }
+
+    vec![]
+}

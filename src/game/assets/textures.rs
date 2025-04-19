@@ -52,7 +52,7 @@ impl TextureManager {
 
     //Loads all textures, should be called at the beginning of the game
     pub fn load_textures(&mut self, path: &str) {
-        let textures = impfile::parse_file(path);
+        let textures = impfile::find_impfile(path);
         for entry in textures {
             let metadata = TextureMetaData::from_entry(&entry);
             let texture = load_texture(&metadata.path);

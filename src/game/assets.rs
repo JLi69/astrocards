@@ -8,8 +8,28 @@ use egui_backend::egui::{FontData, FontDefinitions, FontFamily};
 use egui_gl_glfw as egui_backend;
 use std::{fs::File, io::Read};
 
+pub fn open_file(path: &str) -> Result<File, String> {
+    //Search in the current directory first
+    let file = File::open(path);
+    if file.is_ok() {
+        return file.map_err(|e| e.to_string());
+    }
+
+    //If on a unix system, search in /usr/share/games/astrocards/
+    #[cfg(unix)]
+    {
+        let usr_share = format!("/usr/share/games/astrocards/{path}");
+        let file = File::open(usr_share);
+        if file.is_ok() {
+            return file.map_err(|e| e.to_string());
+        }
+    }
+
+    Err(format!("File does not exist: {path}"))
+}
+
 pub fn load_font(path: &str, fonts: &mut FontDefinitions) {
-    let font_file = File::open(path);
+    let font_file = open_file(path);
     match font_file {
         Ok(mut font_file) => {
             let mut bytes = vec![];

@@ -3,7 +3,7 @@ pub mod draw;
 pub mod sprite;
 pub mod update;
 
-use self::assets::audio::SfxPlayer;
+use self::assets::{audio::SfxPlayer, open_file};
 use crate::{
     flashcards::{Flashcard, SET_PATH},
     gui::GuiController,
@@ -17,7 +17,7 @@ use assets::textures::TextureManager;
 use egui_gl_glfw::egui::{Event, FontDefinitions, MouseWheelUnit, emath};
 use glfw::{GlfwReceiver, WindowEvent};
 use sprite::{Asteroid, Explosion};
-use std::{collections::VecDeque, fs::File, io::Read};
+use std::{collections::VecDeque, io::Read};
 
 const DEFAULT_SPAWN_INTERVAL: f32 = 8.0;
 const DEFAULT_HEALTH: u32 = 5;
@@ -87,7 +87,7 @@ pub struct Game {
     pub log: VecDeque<LogItem>,
     pub current_screen: GameScreen,
     pub about_text: Vec<String>,
-    pub set_paths: Vec<String>,
+    pub set_paths: Vec<(String, String)>,
     pub selected_set_path: String,
     //Learn state
     pub learn_state: LearnState,
@@ -169,7 +169,7 @@ impl Game {
     }
 
     pub fn load_config(&mut self, path: &str) {
-        let entries = impfile::parse_file(path);
+        let entries = impfile::find_impfile(path);
         if entries.is_empty() {
             eprintln!("Error: empty config file");
             return;
@@ -326,7 +326,7 @@ impl Game {
     //Opens assets/credits.txt and assets/about.txt
     pub fn load_about(&mut self) {
         //Load about
-        if let Ok(mut file) = File::open("assets/about.txt") {
+        if let Ok(mut file) = open_file("assets/about.txt") {
             let mut buf = String::new();
             let res = file.read_to_string(&mut buf);
             if let Err(msg) = res {
@@ -336,7 +336,7 @@ impl Game {
         }
 
         //Load credits
-        if let Ok(mut file) = File::open("assets/credits.txt") {
+        if let Ok(mut file) = open_file("assets/credits.txt") {
             let mut buf = String::new();
             let res = file.read_to_string(&mut buf);
             if let Err(msg) = res {
@@ -348,18 +348,35 @@ impl Game {
 
     pub fn get_set_list(&mut self) {
         self.set_paths.clear();
-        if let Ok(sets) = std::fs::read_dir(SET_PATH) {
-            for entry in sets.flatten() {
-                let name = entry.file_name().into_string().unwrap_or(String::new());
-                if name.is_empty() {
-                    continue;
-                }
-
-                if entry.path().is_file() {
-                    self.set_paths.push(name);
-                }
-            }
+        self.set_paths.extend(get_set_list_dir(SET_PATH));
+        #[cfg(unix)]
+        {
+            let home_dir = env!("HOME");
+            let home_set_path = format!("{home_dir}/.astrocards");
+            eprintln!("Searching for sets in: {home_set_path}...");
+            self.set_paths.extend(get_set_list_dir(&home_set_path));
+            let usr_share = format!("/usr/share/astrocards/{SET_PATH}");
+            eprintln!("Searching for sets in: {usr_share}...");
+            self.set_paths.extend(get_set_list_dir(&usr_share));
         }
         self.set_paths.sort();
     }
+}
+
+//(file, directory)
+fn get_set_list_dir(dir_path: &str) -> Vec<(String, String)> {
+    let mut set_paths = vec![];
+    if let Ok(sets) = std::fs::read_dir(dir_path) {
+        for entry in sets.flatten() {
+            let name = entry.file_name().into_string().unwrap_or(String::new());
+            if name.is_empty() {
+                continue;
+            }
+
+            if entry.path().is_file() {
+                set_paths.push((name, dir_path.to_string()));
+            }
+        }
+    }
+    set_paths
 }

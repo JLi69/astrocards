@@ -1,7 +1,7 @@
+use super::open_file;
+use crate::impfile;
 use rodio::{Decoder, OutputStream, OutputStreamHandle, Source, source::Buffered};
 use std::{collections::HashMap, fs::File, io::BufReader};
-
-use crate::impfile;
 
 type Sfx = Buffered<Decoder<BufReader<File>>>;
 
@@ -12,7 +12,7 @@ pub struct SfxPlayer {
 }
 
 fn sfx_from_file(path: &str) -> Result<Sfx, String> {
-    let file = BufReader::new(File::open(path).map_err(|e| e.to_string())?);
+    let file = BufReader::new(open_file(path)?);
     let decoder = Decoder::new(file).map_err(|e| e.to_string())?;
     Ok(decoder.buffered())
 }
@@ -58,7 +58,7 @@ impl SfxPlayer {
 
     //Pass in the path to the impfile containining the audio metadata
     pub fn load_audio(&mut self, audio_impfile_path: &str) {
-        let audio = impfile::parse_file(audio_impfile_path);
+        let audio = impfile::find_impfile(audio_impfile_path);
         for entry in audio {
             let id = entry.get_name();
             let path = entry.get_var("path");
