@@ -1,0 +1,20 @@
+# A list of irregular Italian verbs in the Passato Prossimo
+
+"irregular_passato_prossimo" {
+	"fare" = "fatto";
+	"leggere" = "letto";
+	"scrivere" = "scritto";
+	"mettere" = "messo";
+	"bere" = "bevuto";
+	"chiudere" = "chiuso";
+	"chiedere" = "chiesto";
+	"dire" = "detto";
+	"vedere" = "visto";
+	"rompere" = "rotto";
+	"rispondere" = "risposto";
+	"decidere" = "deciso";
+	"coprire" = "coperto";
+	"aprire" = "aperto";
+	"soffrire" = "sofferto";
+	"offrire" = "offreto";
+}
