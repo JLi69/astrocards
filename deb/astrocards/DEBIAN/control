@@ -1,0 +1,9 @@
+Package: astrocards
+Version: 0.1.1
+Section: games
+Priority: optional
+Architecture: amd64
+Essential: no
+Installed-Size: 9268
+Maintainer: Nullptr Error
+Description: A space themed flashcard game to help you memorize facts/information.
