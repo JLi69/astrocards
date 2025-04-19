@@ -355,7 +355,7 @@ impl Game {
             let home_set_path = format!("{home_dir}/.astrocards");
             eprintln!("Searching for sets in: {home_set_path}...");
             self.set_paths.extend(get_set_list_dir(&home_set_path));
-            let usr_share = format!("/usr/share/astrocards/{SET_PATH}");
+            let usr_share = format!("/usr/share/games/astrocards/{SET_PATH}");
             eprintln!("Searching for sets in: {usr_share}...");
             self.set_paths.extend(get_set_list_dir(&usr_share));
         }
