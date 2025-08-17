@@ -351,6 +351,7 @@ impl GuiController {
             .movable(false)
             .title_bar(false)
             .scroll(true)
+            .hscroll(false)
             .fixed_size(vec2(width, height - BOTTOM_HEIGHT))
             .fixed_pos(Pos2::new(0.0, 0.0))
             .show(&self.ctx, |ui| {
@@ -379,6 +380,7 @@ impl GuiController {
             .movable(false)
             .title_bar(false)
             .scroll(true)
+            .hscroll(false)
             .fixed_size(vec2(80.0, BOTTOM_HEIGHT))
             .fixed_pos(Pos2::new(8.0, h as f32 / pixels_per_point - 32.0))
             .show(&self.ctx, |ui| {
@@ -435,6 +437,7 @@ impl GuiController {
             .movable(false)
             .title_bar(false)
             .scroll(true)
+            .hscroll(false)
             .fixed_size(vec2(width, height))
             .fixed_pos(Pos2::new(margin, 16.0))
             .show(&self.ctx, |ui| {
@@ -496,6 +499,7 @@ impl GuiController {
             .movable(false)
             .title_bar(false)
             .scroll(true)
+            .hscroll(false)
             .fixed_size(vec2(width, height))
             .fixed_pos(Pos2::new(width * 0.5, 16.0))
             .show(&self.ctx, |ui| {

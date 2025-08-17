@@ -190,10 +190,10 @@ fn parse_name(file_chars: &mut Peekable<Chars>) -> Result<String, String> {
         }
 
         //Inside a quote
-        if quote_count == 1 {
-            if let Some(ch) = ch {
-                name.push(ch);
-            }
+        if quote_count == 1
+            && let Some(ch) = ch
+        {
+            name.push(ch);
         }
 
         ch = file_chars.next();
