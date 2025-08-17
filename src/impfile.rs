@@ -349,7 +349,7 @@ pub fn find_impfile(path: &str) -> EntryList {
     if !entries.is_empty() {
         return entries;
     }
-   
+
     #[cfg(unix)]
     {
         let usr_share = format!("/usr/share/games/astrocards/{path}");

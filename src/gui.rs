@@ -234,7 +234,7 @@ impl GuiController {
         self.ctx.begin_pass(self.input_state.input.take());
 
         egui::CentralPanel::default()
-            .frame(egui::Frame::none())
+            .frame(egui::Frame::new())
             .show(&self.ctx, |ui| {
                 display_asteroid_text(gamestate, ui);
                 display_hud(gamestate, ui);
@@ -258,7 +258,7 @@ impl GuiController {
 
         //Display go to main menu button and mute button
         egui::Window::new("buttons")
-            .frame(egui::Frame::none())
+            .frame(egui::Frame::new())
             .movable(false)
             .title_bar(false)
             .scroll(true)
@@ -282,7 +282,7 @@ impl GuiController {
             let width = w as f32 / pixels_per_point;
             let height = h as f32 / pixels_per_point;
             egui::Window::new("game_over_screen")
-                .frame(egui::Frame::none().fill(Color32::from_rgba_unmultiplied(255, 0, 0, 128)))
+                .frame(egui::Frame::new().fill(Color32::from_rgba_unmultiplied(255, 0, 0, 128)))
                 .movable(false)
                 .title_bar(false)
                 .scroll(true)
@@ -318,8 +318,10 @@ impl GuiController {
         } = self.ctx.end_pass();
 
         //Handle copy pasting
-        if !platform_output.copied_text.is_empty() {
-            egui_backend::copy_to_clipboard(&mut self.input_state, platform_output.copied_text);
+        for command in platform_output.commands {
+            if let egui::OutputCommand::CopyText(copied_text) = command {
+                egui_backend::copy_to_clipboard(&mut self.input_state, copied_text);
+            }
         }
 
         //Display
@@ -345,7 +347,7 @@ impl GuiController {
         let height = h as f32 / pixels_per_point;
         const BOTTOM_HEIGHT: f32 = 32.0;
         egui::Window::new("main_menu")
-            .frame(egui::Frame::none())
+            .frame(egui::Frame::new())
             .movable(false)
             .title_bar(false)
             .scroll(true)
@@ -373,7 +375,7 @@ impl GuiController {
             });
 
         egui::Window::new("mute")
-            .frame(egui::Frame::none())
+            .frame(egui::Frame::new())
             .movable(false)
             .title_bar(false)
             .scroll(true)
@@ -400,8 +402,10 @@ impl GuiController {
         } = self.ctx.end_pass();
 
         //Handle copy pasting
-        if !platform_output.copied_text.is_empty() {
-            egui_backend::copy_to_clipboard(&mut self.input_state, platform_output.copied_text);
+        for command in platform_output.commands {
+            if let egui::OutputCommand::CopyText(copied_text) = command {
+                egui_backend::copy_to_clipboard(&mut self.input_state, copied_text);
+            }
         }
 
         //Display
@@ -427,7 +431,7 @@ impl GuiController {
         let width = w as f32 / pixels_per_point - margin * 2.0;
         let height = h as f32 / pixels_per_point - 32.0;
         egui::Window::new("about")
-            .frame(egui::Frame::none())
+            .frame(egui::Frame::new())
             .movable(false)
             .title_bar(false)
             .scroll(true)
@@ -460,8 +464,10 @@ impl GuiController {
         } = self.ctx.end_pass();
 
         //Handle copy pasting
-        if !platform_output.copied_text.is_empty() {
-            egui_backend::copy_to_clipboard(&mut self.input_state, platform_output.copied_text);
+        for command in platform_output.commands {
+            if let egui::OutputCommand::CopyText(copied_text) = command {
+                egui_backend::copy_to_clipboard(&mut self.input_state, copied_text);
+            }
         }
 
         //Display
@@ -486,7 +492,7 @@ impl GuiController {
         let width = w as f32 / pixels_per_point * 0.5;
         let height = h as f32 / pixels_per_point - 32.0;
         egui::Window::new("load_sets")
-            .frame(egui::Frame::none())
+            .frame(egui::Frame::new())
             .movable(false)
             .title_bar(false)
             .scroll(true)
@@ -552,8 +558,10 @@ impl GuiController {
         } = self.ctx.end_pass();
 
         //Handle copy pasting
-        if !platform_output.copied_text.is_empty() {
-            egui_backend::copy_to_clipboard(&mut self.input_state, platform_output.copied_text);
+        for command in platform_output.commands {
+            if let egui::OutputCommand::CopyText(copied_text) = command {
+                egui_backend::copy_to_clipboard(&mut self.input_state, copied_text);
+            }
         }
 
         //Display
@@ -615,8 +623,10 @@ impl GuiController {
         } = self.ctx.end_pass();
 
         //Handle copy pasting
-        if !platform_output.copied_text.is_empty() {
-            egui_backend::copy_to_clipboard(&mut self.input_state, platform_output.copied_text);
+        for command in platform_output.commands {
+            if let egui::OutputCommand::CopyText(copied_text) = command {
+                egui_backend::copy_to_clipboard(&mut self.input_state, copied_text);
+            }
         }
 
         //Display
